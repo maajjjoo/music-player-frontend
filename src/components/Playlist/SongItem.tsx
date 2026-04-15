@@ -1,4 +1,4 @@
-import { SongNode } from '../../models/Song';
+import type { SongNode } from '../../models/Song';
 
 interface SongItemProps {
   node: SongNode;

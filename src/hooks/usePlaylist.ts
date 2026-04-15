@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import { DoublyLinkedList } from '../data-structures/DoublyLinkedList';
-import { Song, SongNode } from '../models/Song';
+import type { Song, SongNode } from '../models/Song';
 
 export type RepeatMode = 'none' | 'one' | 'all';
 

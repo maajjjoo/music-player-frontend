@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Song } from '../../models/Song';
+import type { Song } from '../../models/Song';
 import { searchTracks } from '../../services/spotifyApi';
 import './SearchBar.css';
 

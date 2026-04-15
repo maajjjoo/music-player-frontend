@@ -1,4 +1,4 @@
-import { Song, SongNode } from '../models/Song';
+import type { Song, SongNode } from '../models/Song';
 
 export class DoublyLinkedList {
   private head: SongNode | null = null;
@@ -167,17 +167,19 @@ export class DoublyLinkedList {
   }
 
   shuffle(): void {
-    const nodes = this.toArray();
+    const nodes: SongNode[] = this.toArray();
     // Fisher-Yates shuffle
     for (let i = nodes.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [nodes[i], nodes[j]] = [nodes[j], nodes[i]];
+      const temp = nodes[i];
+      nodes[i] = nodes[j] as SongNode;
+      nodes[j] = temp as SongNode;
     }
     // Rebuild list from shuffled array
+    const currentId = this.currentNode?.song.id;
     this.head = null;
     this.tail = null;
     this._size = 0;
-    const currentId = this.currentNode?.song.id;
     this.currentNode = null;
 
     for (const node of nodes) {

@@ -1,5 +1,5 @@
 import { getValidAccessToken } from './spotifyAuth';
-import { Song } from '../models/Song';
+import type { Song } from '../models/Song';
 
 const SPOTIFY_API_BASE = 'https://api.spotify.com/v1';
 

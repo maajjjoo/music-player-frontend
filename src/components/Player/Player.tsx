@@ -1,5 +1,5 @@
-import { SongNode } from '../../models/Song';
-import { RepeatMode } from '../../hooks/usePlaylist';
+import type { SongNode } from '../../models/Song';
+import type { RepeatMode } from '../../hooks/usePlaylist';
 import './Player.css';
 
 interface PlayerProps {
