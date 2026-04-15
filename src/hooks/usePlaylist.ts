@@ -77,6 +77,13 @@ export function usePlaylist(): PlaylistState & PlaylistActions {
 
   const removeSong = useCallback(
     (id: string) => {
+      // Revoke blob URLs for local songs to prevent memory leaks
+      const nodes = dll.current.toArray();
+      const node = nodes.find((n) => n.song.id === id);
+      if (node?.song.isLocal) {
+        if (node.song.blobUrl) URL.revokeObjectURL(node.song.blobUrl);
+        if (node.song.artBlobUrl) URL.revokeObjectURL(node.song.artBlobUrl);
+      }
       dll.current.remove(id);
       sync();
     },

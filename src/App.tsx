@@ -7,6 +7,7 @@ import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary';
 import { Vinyl } from './components/Vinyl/Vinyl';
 import { CoverShelf } from './components/CoverShelf/CoverShelf';
 import { SearchBar } from './components/SearchBar/SearchBar';
+import { LocalUploader } from './components/LocalUploader/LocalUploader';
 import './App.css';
 
 export default function App() {
@@ -137,6 +138,11 @@ export default function App() {
             songs={playlist.songs}
           />
         </div>
+        <LocalUploader
+          onAddSong={handleAddToQueue}
+          onPlayNow={handlePlayNow}
+          onNotification={showNotification}
+        />
         <div className="app__queue-pill">
           <span>{playlist.songs.length}</span> in queue
         </div>

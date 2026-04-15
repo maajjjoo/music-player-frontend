@@ -3,10 +3,13 @@ export interface Song {
   title: string;
   artist: string;
   album: string;
-  duration: number; // in seconds
+  duration: number; // in milliseconds
   albumArt: string;
-  previewUrl: string | null; // 30-second preview from iTunes
+  previewUrl: string | null;
   isFavorite: boolean;
+  isLocal?: boolean;       // true for locally uploaded files
+  blobUrl?: string;        // blob: URL for local audio (to be revoked on remove)
+  artBlobUrl?: string;     // blob: URL for local cover image
 }
 
 export interface SongNode {

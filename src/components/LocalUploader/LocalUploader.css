@@ -1,0 +1,250 @@
+/* ── Trigger button ─────────────────────────────────────────────────────── */
+.lu__trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: none;
+  background: #1a1a1a;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.lu__trigger:hover {
+  background: #333;
+  transform: scale(1.04);
+}
+
+/* ── Overlay ────────────────────────────────────────────────────────────── */
+.lu__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: luFadeIn 0.2s ease;
+}
+
+@keyframes luFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Modal ──────────────────────────────────────────────────────────────── */
+.lu__modal {
+  background: #fff;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 560px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+  animation: luSlideUp 0.25s cubic-bezier(0.34, 1.4, 0.64, 1);
+  overflow: hidden;
+}
+
+@keyframes luSlideUp {
+  from { opacity: 0; transform: translateY(30px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.lu__modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+  flex-shrink: 0;
+}
+
+.lu__modal-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.lu__close {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.07);
+  color: #555;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.lu__close:hover { background: rgba(0, 0, 0, 0.14); }
+
+/* ── Song list ──────────────────────────────────────────────────────────── */
+.lu__list {
+  overflow-y: auto;
+  flex: 1;
+  padding: 12px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lu__item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #f9f9f9;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* ── Cover art ──────────────────────────────────────────────────────────── */
+.lu__art-wrap {
+  position: relative;
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+}
+
+.lu__art {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.lu__art-btn {
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.lu__art-wrap:hover .lu__art-btn { opacity: 1; }
+
+/* ── Fields ─────────────────────────────────────────────────────────────── */
+.lu__fields {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.lu__input {
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+
+.lu__input:focus { border-color: #a855f7; }
+
+.lu__input--secondary {
+  font-size: 13px;
+  font-weight: 400;
+  color: #555;
+}
+
+.lu__filename {
+  font-size: 11px;
+  color: #aaa;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Remove button ──────────────────────────────────────────────────────── */
+.lu__remove {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.07);
+  color: #888;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.lu__remove:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* ── Actions ────────────────────────────────────────────────────────────── */
+.lu__actions {
+  display: flex;
+  gap: 10px;
+  padding: 16px 24px 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.07);
+  flex-shrink: 0;
+}
+
+.lu__btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lu__btn--play {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+.lu__btn--play:hover { background: #000; transform: scale(1.02); }
+
+.lu__btn--add {
+  background: rgba(168, 85, 247, 0.1);
+  color: #a855f7;
+  border: 1.5px solid rgba(168, 85, 247, 0.3);
+}
+
+.lu__btn--add:hover {
+  background: rgba(168, 85, 247, 0.18);
+  transform: scale(1.02);
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .lu__modal { border-radius: 16px; }
+  .lu__modal-header { padding: 16px 16px 12px; }
+  .lu__list { padding: 10px 16px; }
+  .lu__actions { padding: 12px 16px 16px; flex-direction: column; }
+}
