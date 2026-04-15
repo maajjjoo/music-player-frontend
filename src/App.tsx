@@ -1,13 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { usePlaylist } from './hooks/usePlaylist';
-import { useSpotifyPlayer } from './hooks/useSpotifyPlayer';
-import {
-  isAuthenticated,
-  redirectToSpotifyLogin,
-  exchangeCodeForTokens,
-  clearTokens,
-} from './services/spotifyAuth';
-import { getRecommendations } from './services/spotifyApi';
+import { useAudioPlayer } from './hooks/useAudioPlayer';
+import { getDefaultSongs } from './services/itunesApi';
 import { Player } from './components/Player/Player';
 import { Playlist } from './components/Playlist/Playlist';
 import { SearchBar } from './components/SearchBar/SearchBar';
@@ -15,93 +9,50 @@ import './App.css';
 
 export default function App() {
   const playlist = usePlaylist();
-  const player = useSpotifyPlayer();
 
-  // Handle OAuth callback — works on any route (/callback?code=...)
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get('code');
-    const error = params.get('error');
-
-    console.log('[Auth] pathname:', window.location.pathname);
-    console.log('[Auth] search:', window.location.search);
-    console.log('[Auth] code:', code ? 'present' : 'none');
-    console.log('[Auth] error:', error);
-
-    if (error) {
-      console.error('Spotify auth error:', error);
-      window.history.replaceState({}, '', '/');
-      return;
+  const handleSongEnded = useCallback(() => {
+    const next = playlist.playNext();
+    if (next?.song.previewUrl) {
+      player.play(next.song.previewUrl);
     }
-
-    if (code) {
-      console.log('[Auth] Exchanging code for tokens...');
-      exchangeCodeForTokens(code)
-        .then(() => {
-          console.log('[Auth] Token exchange successful');
-          window.history.replaceState({}, '', '/');
-        })
-        .catch((err) => {
-          console.error('[Auth] Token exchange failed:', err);
-          window.history.replaceState({}, '', '/');
-        });
-    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Load recommendations once authenticated and player is ready
-  useEffect(() => {
-    if (!isAuthenticated() || !player.isReady) return;
+  const player = useAudioPlayer(handleSongEnded);
 
-    getRecommendations()
+  // Load default songs on mount
+  useEffect(() => {
+    getDefaultSongs()
       .then((songs) => {
         songs.forEach((song) => playlist.addToEnd(song));
       })
       .catch(console.error);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [player.isReady]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  async function handlePlaySong(id: string) {
+  function handlePlaySong(id: string) {
     playlist.playSong(id);
     const node = playlist.songs.find((n) => n.song.id === id);
-    if (node) {
-      await player.play(node.song.uri);
+    if (node?.song.previewUrl) {
+      player.play(node.song.previewUrl);
     }
   }
 
-  async function handleNext() {
+  function handleNext() {
     const next = playlist.playNext();
-    if (next) await player.play(next.song.uri);
+    if (next?.song.previewUrl) {
+      player.play(next.song.previewUrl);
+    }
   }
 
-  async function handlePrev() {
+  function handlePrev() {
     const prev = playlist.playPrev();
-    if (prev) await player.play(prev.song.uri);
+    if (prev?.song.previewUrl) {
+      player.play(prev.song.previewUrl);
+    }
   }
 
   const filteredSongs = playlist.getFilteredSongs();
-
-  if (!isAuthenticated()) {
-    return (
-      <div className="login-screen">
-        <div className="login-card">
-          <div className="login-card__logo">♫</div>
-          <h1 className="login-card__title">Music Player</h1>
-          <p className="login-card__subtitle">
-            A doubly linked list powered music player
-          </p>
-          <button
-            className="login-card__btn"
-            onClick={() => redirectToSpotifyLogin()}
-          >
-            Connect with Spotify
-          </button>
-          <p className="login-card__note">
-            Requires Spotify Premium for full playback
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="app">
@@ -112,16 +63,6 @@ export default function App() {
           onQueryChange={playlist.setSearchQuery}
           onAddSong={playlist.addToEnd}
         />
-        <button
-          className="app__logout"
-          onClick={() => {
-            clearTokens();
-            window.location.reload();
-          }}
-          aria-label="Log out"
-        >
-          Log out
-        </button>
       </header>
 
       <main className="app__main">

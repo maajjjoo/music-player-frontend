@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Song } from '../../models/Song';
-import { searchTracks } from '../../services/spotifyApi';
+import { searchTracks } from '../../services/itunesApi';
 import './SearchBar.css';
 
 interface SearchBarProps {

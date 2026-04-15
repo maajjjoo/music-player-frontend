@@ -5,7 +5,7 @@ export interface Song {
   album: string;
   duration: number; // in seconds
   albumArt: string;
-  uri: string; // Spotify URI for playback e.g. spotify:track:xxx
+  previewUrl: string | null; // 30-second preview from iTunes
   isFavorite: boolean;
 }
 
