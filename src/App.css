@@ -2,26 +2,32 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background: #121212;
-  color: #fff;
-  font-family: 'Circular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  overflow: hidden;
 }
 
+/* ── Header ─────────────────────────────────────────────────────────────── */
 .app__header {
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 12px 24px;
-  background: #000;
-  border-bottom: 1px solid #282828;
+  padding: 14px 24px;
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
   flex-shrink: 0;
+  z-index: 20;
 }
 
 .app__logo {
-  font-size: 20px;
-  font-weight: 700;
-  color: #1db954;
+  font-size: 22px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--pastel-pink) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   white-space: nowrap;
+  letter-spacing: -0.5px;
 }
 
 .app__header .search-bar {
@@ -29,91 +35,8 @@
   padding: 0;
 }
 
-.app__logout {
-  background: none;
-  border: 1px solid #535353;
-  color: #b3b3b3;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 13px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.2s;
-}
-
-.app__logout:hover {
-  border-color: #fff;
-  color: #fff;
-}
-
 .app__main {
   flex: 1;
   overflow-y: auto;
-  padding-bottom: 90px;
-}
-
-/* Login screen */
-.login-screen {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #1a1a2e 0%, #121212 100%);
-}
-
-.login-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  padding: 48px 40px;
-  background: #181818;
-  border-radius: 16px;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
-  max-width: 360px;
-  width: 90%;
-  text-align: center;
-}
-
-.login-card__logo {
-  font-size: 64px;
-  color: #1db954;
-}
-
-.login-card__title {
-  font-size: 28px;
-  font-weight: 700;
-  color: #fff;
-  margin: 0;
-}
-
-.login-card__subtitle {
-  color: #b3b3b3;
-  font-size: 14px;
-  margin: 0;
-}
-
-.login-card__btn {
-  background: #1db954;
-  color: #000;
-  border: none;
-  padding: 14px 32px;
-  border-radius: 24px;
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
-  width: 100%;
-  margin-top: 8px;
-}
-
-.login-card__btn:hover {
-  background: #1ed760;
-  transform: scale(1.02);
-}
-
-.login-card__note {
-  color: #535353;
-  font-size: 12px;
-  margin: 0;
+  padding-bottom: 110px;
 }
