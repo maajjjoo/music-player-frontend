@@ -17,17 +17,27 @@ export default function App() {
   const playlist = usePlaylist();
   const player = useSpotifyPlayer();
 
-  // Handle OAuth callback
+  // Handle OAuth callback — works on any route (/callback?code=...)
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
+    const error = params.get('error');
+
+    if (error) {
+      console.error('Spotify auth error:', error);
+      window.history.replaceState({}, '', '/');
+      return;
+    }
 
     if (code) {
       exchangeCodeForTokens(code)
         .then(() => {
           window.history.replaceState({}, '', '/');
         })
-        .catch(console.error);
+        .catch((err) => {
+          console.error('Token exchange failed:', err);
+          window.history.replaceState({}, '', '/');
+        });
     }
   }, []);
 
