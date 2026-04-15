@@ -167,36 +167,40 @@ export class DoublyLinkedList {
   }
 
   shuffle(): void {
-    const nodes: SongNode[] = this.toArray();
-    // Fisher-Yates shuffle
-    for (let i = nodes.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      const temp = nodes[i];
-      nodes[i] = nodes[j] as SongNode;
-      nodes[j] = temp as SongNode;
-    }
-    // Rebuild list from shuffled array
+    const songs = this.toArray().map((n) => n.song);
     const currentId = this.currentNode?.song.id;
+
+    // Fisher-Yates shuffle
+    for (let i = songs.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const temp = songs[i] as Song;
+      songs[i] = songs[j] as Song;
+      songs[j] = temp;
+    }
+
+    // Rebuild list
     this.head = null;
     this.tail = null;
     this._size = 0;
     this.currentNode = null;
 
-    for (const node of nodes) {
-      this.addToEnd(node.song);
+    for (const song of songs) {
+      this.addToEnd(song);
     }
 
     // Restore currentNode pointer
     if (currentId) {
-      let current = this.head;
-      while (current) {
-        if (current.song.id === currentId) {
-          this.currentNode = current;
-          break;
-        }
-        current = current.next;
-      }
+      this.currentNode = this.findNodeById(currentId);
     }
+  }
+
+  private findNodeById(id: string): SongNode | null {
+    let node: SongNode | null = this.head;
+    while (node !== null) {
+      if (node.song.id === id) return node;
+      node = node.next;
+    }
+    return null;
   }
 
   toArray(): SongNode[] {
