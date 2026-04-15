@@ -34,13 +34,13 @@ const TimeFormatter = {
   },
 };
 
-// ─── Utility: Vintage Color Extractor ────────────────────────────────────────
+// ─── Utility: Color Extractor ─────────────────────────────────────────────────
 
-const VintageColorExtractor = {
-  DEFAULT: '#f4f1e8' as string,
-  SIZE: 12,
+const ColorExtractor = {
+  DEFAULT: 'rgba(167,139,250,0.35)' as string,
+  SIZE: 16,
 
-  extractWarmTone(img: HTMLImageElement): string {
+  extract(img: HTMLImageElement): string {
     try {
       const canvas = document.createElement('canvas');
       canvas.width = this.SIZE;
@@ -54,25 +54,20 @@ const VintageColorExtractor = {
         r += data[i]; g += data[i + 1]; b += data[i + 2];
       }
       const n = data.length / 4;
-      // Sepia-blend with warm cream
-      const sr = Math.min(255, (r / n) * 0.393 + (g / n) * 0.769 + (b / n) * 0.189);
-      const sg = Math.min(255, (r / n) * 0.349 + (g / n) * 0.686 + (b / n) * 0.168);
-      const sb = Math.min(255, (r / n) * 0.272 + (g / n) * 0.534 + (b / n) * 0.131);
-      return `rgb(${Math.floor((sr + 250) * 0.6)},${Math.floor((sg + 247) * 0.6)},${Math.floor((sb + 240) * 0.6)})`;
+      return `rgba(${Math.round(r / n)},${Math.round(g / n)},${Math.round(b / n)},0.35)`;
     } catch {
       return this.DEFAULT;
     }
   },
 };
 
-// ─── Utility: Turntable Animation Controller ─────────────────────────────────
+// ─── Utility: Turntable Controller (33⅓ RPM) ─────────────────────────────────
 
 const createTurntableController = (onUpdate: (deg: number) => void) => {
   let deg = 0;
   let rafId = 0;
   let lastTs = 0;
-  // Classic 33⅓ RPM → degrees per millisecond
-  const SPEED = (33.33 * 360) / (60 * 1000);
+  const SPEED = (33.33 * 360) / (60 * 1000); // deg/ms
 
   const start = () => {
     const tick = (ts: number) => {
@@ -86,11 +81,7 @@ const createTurntableController = (onUpdate: (deg: number) => void) => {
     rafId = requestAnimationFrame(tick);
   };
 
-  const stop = () => {
-    cancelAnimationFrame(rafId);
-    lastTs = 0;
-  };
-
+  const stop = () => { cancelAnimationFrame(rafId); lastTs = 0; };
   return { start, stop, cleanup: stop };
 };
 
@@ -139,73 +130,78 @@ export function Vinyl({
 
   const handleImgLoad = useCallback(() => {
     if (imgRef.current) {
-      onColorExtracted(VintageColorExtractor.extractWarmTone(imgRef.current));
+      onColorExtracted(ColorExtractor.extract(imgRef.current));
     }
   }, [onColorExtracted]);
 
   return (
-    <div className={`vt-stage${isPlaying ? ' vt-stage--playing' : ''}`}>
+    <div className={`vp${isPlaying ? ' vp--playing' : ''}`}>
 
-      {/* ── Turntable platter ── */}
-      <div className="vt-platter">
+      {/* ── Song info above the record ── */}
+      <div className="vp__meta" aria-live="polite">
+        <h2 className="vp__title">{song?.title ?? 'No track selected'}</h2>
+        <p className="vp__artist">{song?.artist ?? 'Choose a song to begin'}</p>
+      </div>
 
+      {/* ── Vinyl record ── */}
+      <div className="vp__scene">
         {/* Tonearm */}
-        <div className={`vt-arm${isPlaying ? ' vt-arm--playing' : ''}`}>
-          <div className="vt-arm__pivot" />
-          <div className="vt-arm__rod" />
-          <div className="vt-arm__head" />
+        <div className={`vp__arm${isPlaying ? ' vp__arm--playing' : ''}`} aria-hidden="true">
+          <div className="vp__arm-pivot" />
+          <div className="vp__arm-rod" />
+          <div className="vp__arm-head" />
         </div>
 
-        {/* Spinning record */}
+        {/* Outer glow ring */}
+        <div className="vp__glow-ring" aria-hidden="true" />
+
+        {/* The record itself */}
         <div
-          className="vt-record"
+          className="vp__record"
           style={{ transform: `rotate(${rotation}deg)` }}
           aria-label="Vinyl record"
         >
-          <div className="vt-record__grooves" />
+          {/* Groove rings */}
+          <div className="vp__grooves" aria-hidden="true" />
+
+          {/* Sheen overlay */}
+          <div className="vp__sheen" aria-hidden="true" />
 
           {/* Center label */}
-          <div className="vt-label">
+          <div className="vp__label">
             {song?.albumArt ? (
               <img
                 ref={imgRef}
                 src={song.albumArt}
                 alt={song.album ?? 'Album art'}
-                className="vt-label__art"
+                className="vp__label-art"
                 onLoad={handleImgLoad}
                 crossOrigin="anonymous"
               />
             ) : (
-              <div className="vt-label__art vt-label__art--empty">
-                <span aria-hidden="true">♪</span>
-              </div>
+              <div className="vp__label-empty" aria-hidden="true">♪</div>
             )}
-
-            {/* Song info pill — rotates with record, readable because it's small */}
-            <div className="vt-label__info" aria-live="polite">
-              <span className="vt-label__title">{song?.title ?? 'Select a record'}</span>
-              <span className="vt-label__artist">{song?.artist ?? ''}</span>
-            </div>
+            {/* Gold ring on label */}
+            <div className="vp__label-ring" aria-hidden="true" />
           </div>
 
-          <div className="vt-record__spindle" aria-hidden="true" />
+          {/* Spindle */}
+          <div className="vp__spindle" aria-hidden="true" />
         </div>
-
-        {/* Ambient glow when playing */}
-        {isPlaying && <div className="vt-platter__glow" aria-hidden="true" />}
       </div>
 
       {/* ── Controls card ── */}
-      <div className="vt-controls">
+      <div className="vp__card">
 
         {/* Progress */}
-        <div className="vt-progress">
-          <span className="vt-progress__time">{TimeFormatter.format(position)}</span>
-          <div className="vt-progress__track" role="presentation">
-            <div className="vt-progress__fill" style={{ width: `${progress}%` }} />
+        <div className="vp__progress">
+          <span className="vp__time">{TimeFormatter.format(position)}</span>
+          <div className="vp__track">
+            <div className="vp__track-bg" />
+            <div className="vp__track-fill" style={{ width: `${progress}%` }} />
             <input
               type="range"
-              className="vt-progress__input"
+              className="vp__track-input"
               min={0}
               max={duration || 100}
               value={position}
@@ -213,40 +209,32 @@ export function Vinyl({
               aria-label="Seek"
             />
           </div>
-          <span className="vt-progress__time">{TimeFormatter.format(duration)}</span>
+          <span className="vp__time">{TimeFormatter.format(duration)}</span>
         </div>
 
         {/* Transport */}
-        <div className="vt-transport" role="group" aria-label="Playback controls">
+        <div className="vp__transport" role="group" aria-label="Playback controls">
           <button
-            className={`vt-btn vt-btn--sm${isShuffled ? ' vt-btn--active' : ''}`}
+            className={`vp__btn vp__btn--ghost${isShuffled ? ' vp__btn--on' : ''}`}
             onClick={onToggleShuffle}
             aria-label="Shuffle"
             title="Shuffle"
           >⇄</button>
 
-          <button
-            className="vt-btn"
-            onClick={onPrev}
-            aria-label="Previous track"
-          >⏮</button>
+          <button className="vp__btn" onClick={onPrev} aria-label="Previous">⏮</button>
 
           <button
-            className="vt-btn vt-btn--play"
+            className="vp__btn vp__btn--play"
             onClick={onTogglePlay}
             aria-label={isPlaying ? 'Pause' : 'Play'}
           >
-            {isPlaying ? '⏸' : '▶'}
+            <span className="vp__btn-play-icon">{isPlaying ? '⏸' : '▶'}</span>
           </button>
 
-          <button
-            className="vt-btn"
-            onClick={onNext}
-            aria-label="Next track"
-          >⏭</button>
+          <button className="vp__btn" onClick={onNext} aria-label="Next">⏭</button>
 
           <button
-            className={`vt-btn vt-btn--sm${repeatMode !== 'none' ? ' vt-btn--active' : ''}`}
+            className={`vp__btn vp__btn--ghost${repeatMode !== 'none' ? ' vp__btn--on' : ''}`}
             onClick={onToggleRepeat}
             aria-label="Repeat"
             title={`Repeat: ${repeatMode}`}
@@ -256,16 +244,14 @@ export function Vinyl({
         </div>
 
         {/* Volume */}
-        <div className="vt-volume" role="group" aria-label="Volume">
-          <span aria-hidden="true" className="vt-volume__icon">🔈</span>
-          <div className="vt-volume__track" role="presentation">
-            <div
-              className="vt-volume__fill"
-              style={{ width: `${volume * 100}%` }}
-            />
+        <div className="vp__volume" role="group" aria-label="Volume">
+          <span className="vp__vol-icon" aria-hidden="true">🔈</span>
+          <div className="vp__track vp__track--vol">
+            <div className="vp__track-bg" />
+            <div className="vp__track-fill" style={{ width: `${volume * 100}%` }} />
             <input
               type="range"
-              className="vt-volume__input"
+              className="vp__track-input"
               min={0}
               max={1}
               step={0.01}
@@ -274,7 +260,7 @@ export function Vinyl({
               aria-label="Volume"
             />
           </div>
-          <span aria-hidden="true" className="vt-volume__icon">🔊</span>
+          <span className="vp__vol-icon" aria-hidden="true">🔊</span>
         </div>
       </div>
     </div>

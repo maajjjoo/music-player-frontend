@@ -84,9 +84,8 @@ export default function App() {
         <div className="app__blob app__blob--3" />
       </div>
 
-      <main className="console" aria-label="Vintage Vinyl Player">
-        <section className="console__frame">
-          <header className="console__top">
+      <main className="console" aria-label="Vinyl Player">
+        <header className="console__top">
             <div className="console__brand" aria-label="Brand">
               <div className="console__mark" aria-hidden="true" />
               <div className="console__wordmark">
@@ -207,8 +206,7 @@ export default function App() {
               </div>
             </div>
           </div>
-        </section>
-      </main>
+        </main>
     </div>
   );
 }
