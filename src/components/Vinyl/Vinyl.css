@@ -1,593 +1,571 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   🎵 VINTAGE VINYL TURNTABLE COMPONENT
+   VINTAGE TURNTABLE  —  vt-* namespace
+   Light retro aesthetic · warm cream & gold palette · OOP-aligned
    ═══════════════════════════════════════════════════════════════════════════ */
 
-.vintage-turntable {
+/* ── Stage wrapper ───────────────────────────────────────────────────────── */
+.vt-stage {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 14px 10px 12px;
-  gap: 22px;
+  gap: 28px;
   width: 100%;
-  max-width: 540px;
+  max-width: 480px;
+  padding: 8px 0 4px;
   position: relative;
 }
 
-.vintage-turntable::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: var(--paper-texture);
-  opacity: 0.12;
-  pointer-events: none;
-}
-
-/* ── TURNTABLE BASE ──────────────────────────────────────────────────────── */
-.turntable-base {
+/* ── Turntable platter ───────────────────────────────────────────────────── */
+.vt-platter {
   position: relative;
-  width: 420px;
-  height: 420px;
+  width: 380px;
+  height: 380px;
   flex-shrink: 0;
-  background: 
-    radial-gradient(circle at 30% 30%, var(--vintage-warm-white) 0%, var(--vintage-beige) 100%);
   border-radius: 50%;
-  box-shadow: 
-    0 0 0 8px var(--vintage-tan),
-    0 0 0 12px var(--vintage-sand),
-    0 20px 60px rgba(139, 69, 19, 0.15),
-    inset 0 0 50px rgba(139, 69, 19, 0.05);
-  border: 4px solid var(--vintage-bronze);
+
+  /* Warm wood-like base */
+  background:
+    radial-gradient(circle at 32% 28%, #fdf8f0 0%, #e8dcc8 55%, #d4c4a8 100%);
+
+  /* Concentric ring border effect */
+  box-shadow:
+    0 0 0 6px #d2b48c,
+    0 0 0 10px #c4a882,
+    0 0 0 14px #b89a6e,
+    0 28px 72px rgba(100, 60, 20, 0.18),
+    inset 0 0 60px rgba(100, 60, 20, 0.06);
 }
 
-.turntable-base::before {
+/* Subtle felt mat inside the platter */
+.vt-platter::after {
   content: '';
   position: absolute;
-  inset: 20px;
+  inset: 14px;
   border-radius: 50%;
-  background: 
-    radial-gradient(circle at 40% 40%, var(--vintage-cream) 0%, var(--vintage-beige) 100%);
-  box-shadow: inset 0 0 30px rgba(139, 69, 19, 0.08);
+  background:
+    radial-gradient(circle at 40% 40%, #e8dcc8 0%, #cfc0a4 100%);
+  box-shadow: inset 0 0 30px rgba(100, 60, 20, 0.08);
 }
 
-/* ── VINTAGE TONEARM ─────────────────────────────────────────────────────── */
-.vintage-tonearm {
+/* Ambient glow when playing */
+.vt-platter__glow {
   position: absolute;
-  top: -20px;
-  right: -25px;
-  width: 140px;
-  height: 160px;
-  transform-origin: 20px 140px;
-  transform: rotate(-30deg);
-  transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  z-index: 15;
+  inset: -20px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.18) 0%, transparent 70%);
+  animation: vtGlowPulse 2.4s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
 }
 
-.vintage-vinyl-record:hover {
-  box-shadow: 
-    0 25px 80px rgba(26, 26, 26, 0.4),
-    0 0 0 6px rgba(139, 69, 19, 0.1),
-    0 0 20px rgba(212, 175, 55, 0.1),
-    inset 0 0 60px rgba(0, 0, 0, 0.3);
+@keyframes vtGlowPulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.04); }
 }
 
-.vintage-tonearm--playing {
-  transform: rotate(-8deg);
-  animation: tonearmVibration 0.1s ease-in-out infinite alternate;
+/* ── Tonearm ─────────────────────────────────────────────────────────────── */
+.vt-arm {
+  position: absolute;
+  top: -18px;
+  right: -22px;
+  width: 130px;
+  height: 150px;
+  transform-origin: 18px 132px;   /* pivot at bottom-left */
+  transform: rotate(-28deg);
+  transition: transform 1.1s cubic-bezier(0.34, 1.2, 0.64, 1);
+  z-index: 20;
 }
 
-@keyframes tonearmVibration {
-  0% { transform: rotate(-8deg) translateX(0); }
-  100% { transform: rotate(-8deg) translateX(0.5px); }
+.vt-arm--playing {
+  transform: rotate(-6deg);
 }
 
-.tonearm-pivot {
+/* Pivot ball */
+.vt-arm__pivot {
   position: absolute;
   bottom: 0;
-  left: 15px;
-  width: 30px;
-  height: 30px;
-  background: 
-    radial-gradient(circle, var(--vintage-brass) 0%, var(--vintage-bronze) 100%);
+  left: 4px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  box-shadow: 
-    0 4px 12px rgba(139, 69, 19, 0.3),
-    inset 0 2px 8px rgba(212, 175, 55, 0.4);
-  border: 2px solid var(--vintage-copper);
+  background: radial-gradient(circle at 35% 30%, #e8d080 0%, #b5a642 55%, #8b7320 100%);
+  border: 2px solid #9a8030;
+  box-shadow:
+    0 4px 14px rgba(100, 60, 20, 0.28),
+    inset 0 2px 6px rgba(255, 240, 160, 0.35);
 }
 
-.tonearm-arm {
+/* Arm rod */
+.vt-arm__rod {
   position: absolute;
-  bottom: 25px;
-  left: 25px;
-  width: 6px;
-  height: 120px;
-  background: linear-gradient(180deg, var(--vintage-brass) 0%, var(--vintage-bronze) 100%);
+  bottom: 22px;
+  left: 16px;
+  width: 5px;
+  height: 112px;
   border-radius: 3px;
-  transform: rotate(20deg);
+  background: linear-gradient(180deg, #d4c070 0%, #b5a642 50%, #9a8030 100%);
+  transform: rotate(18deg);
   transform-origin: bottom center;
-  box-shadow: 
-    0 4px 15px rgba(139, 69, 19, 0.25),
-    inset 0 0 4px rgba(212, 175, 55, 0.3);
-  border: 1px solid var(--vintage-copper);
+  box-shadow:
+    0 3px 12px rgba(100, 60, 20, 0.22),
+    inset 0 0 3px rgba(255, 240, 160, 0.25);
 }
 
-.tonearm-cartridge {
+/* Cartridge head */
+.vt-arm__head {
   position: absolute;
-  top: 0;
-  right: 5px;
-  width: 24px;
-  height: 24px;
-  background: 
-    linear-gradient(135deg, var(--vintage-gold) 0%, var(--vintage-brass) 100%);
+  top: 2px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
   border-radius: 50% 50% 50% 0;
-  box-shadow: 
-    0 3px 12px rgba(139, 69, 19, 0.4),
-    inset 0 1px 4px rgba(212, 175, 55, 0.5);
-  border: 2px solid var(--vintage-bronze);
+  background: linear-gradient(135deg, #e8d080 0%, #b5a642 100%);
+  border: 2px solid #9a8030;
+  box-shadow: 0 3px 10px rgba(100, 60, 20, 0.35);
 }
 
-/* ── VINTAGE VINYL RECORD ────────────────────────────────────────────────── */
-.vintage-vinyl-record {
+/* ── Vinyl record ────────────────────────────────────────────────────────── */
+.vt-record {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  /* translate is overridden by inline rotate — use margin trick */
+  margin-top: -170px;
+  margin-left: -170px;
   width: 340px;
   height: 340px;
   border-radius: 50%;
-  background: 
-    radial-gradient(
-      circle,
-      #1a1a1a 0%,
-      #2d2d2d 15%,
-      #1a1a1a 16%,
-      #2d2d2d 25%,
-      #1a1a1a 26%,
-      #2d2d2d 35%,
-      #1a1a1a 36%,
-      #2d2d2d 45%,
-      #1a1a1a 46%,
-      #2d2d2d 55%,
-      #1a1a1a 56%,
-      #2d2d2d 65%,
-      #1a1a1a 66%,
-      #2d2d2d 75%,
-      #1a1a1a 76%,
-      #2d2d2d 85%,
-      #1a1a1a 86%,
-      #2d2d2d 100%
-    );
-  box-shadow: 
-    0 25px 80px rgba(26, 26, 26, 0.4),
-    0 0 0 6px rgba(139, 69, 19, 0.1),
-    inset 0 0 60px rgba(0, 0, 0, 0.3);
   will-change: transform;
   z-index: 5;
-  transition: box-shadow 0.5s ease;
+
+  /* Classic black vinyl with subtle groove rings */
+  background:
+    radial-gradient(
+      circle,
+      #1c1c1c 0%,
+      #2a2a2a 12%,
+      #1c1c1c 13%,
+      #2a2a2a 22%,
+      #1c1c1c 23%,
+      #2a2a2a 32%,
+      #1c1c1c 33%,
+      #2a2a2a 42%,
+      #1c1c1c 43%,
+      #2a2a2a 52%,
+      #1c1c1c 53%,
+      #2a2a2a 62%,
+      #1c1c1c 63%,
+      #2a2a2a 72%,
+      #1c1c1c 73%,
+      #2a2a2a 82%,
+      #1c1c1c 83%,
+      #2a2a2a 100%
+    );
+
+  box-shadow:
+    0 24px 72px rgba(20, 10, 0, 0.38),
+    0 0 0 5px rgba(100, 60, 20, 0.12),
+    inset 0 0 50px rgba(0, 0, 0, 0.28);
+
+  transition: box-shadow 0.6s ease;
 }
 
-.vintage-turntable .vintage-vinyl-record {
-  box-shadow: 
-    0 25px 80px rgba(26, 26, 26, 0.4),
-    0 0 0 6px rgba(139, 69, 19, 0.1),
-    inset 0 0 60px rgba(0, 0, 0, 0.3);
+.vt-stage--playing .vt-record {
+  box-shadow:
+    0 24px 72px rgba(20, 10, 0, 0.38),
+    0 0 0 5px rgba(100, 60, 20, 0.12),
+    0 0 48px rgba(212, 175, 55, 0.22),
+    inset 0 0 50px rgba(0, 0, 0, 0.28);
 }
 
-.vintage-turntable--playing .vintage-vinyl-record {
-  box-shadow: 
-    0 25px 80px rgba(26, 26, 26, 0.4),
-    0 0 0 6px rgba(139, 69, 19, 0.1),
-    0 0 40px rgba(212, 175, 55, 0.2),
-    inset 0 0 60px rgba(0, 0, 0, 0.3);
-}
-
-.record-grooves {
+/* Fine groove texture overlay */
+.vt-record__grooves {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: 
+  background:
     repeating-radial-gradient(
       circle at center,
       transparent 0px,
-      transparent 4px,
-      rgba(255, 255, 255, 0.02) 4px,
-      rgba(255, 255, 255, 0.02) 5px
+      transparent 3px,
+      rgba(255, 255, 255, 0.018) 3px,
+      rgba(255, 255, 255, 0.018) 4px
     );
 }
 
-/* ── Sound Wave Visualizer ───────────────────────────────────────────────── */
-.sound-wave-visualizer {
-  position: absolute;
-  top: -60px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: end;
-  gap: 2px;
-  z-index: 10;
-}
-
-.sound-wave-bar {
-  width: 3px;
-  background: linear-gradient(180deg, var(--vintage-gold) 0%, var(--vintage-brass) 100%);
-  border-radius: 2px;
-  animation: soundWavePulse 1.5s ease-in-out infinite;
-  box-shadow: 0 0 6px rgba(212, 175, 55, 0.4);
-}
-
-@keyframes soundWavePulse {
-  0%, 100% { opacity: 0.3; transform: scaleY(0.5); }
-  50% { opacity: 1; transform: scaleY(1); }
-}
-
-.record-center-label {
+/* Center spindle hole */
+.vt-record__spindle {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  width: 160px;
-  height: 160px;
+  width: 18px;
+  height: 18px;
+  margin-top: -9px;
+  margin-left: -9px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #b5a642 0%, #8b7320 100%);
+  border: 3px solid #d4af37;
+  box-shadow:
+    0 0 0 2px rgba(100, 60, 20, 0.2),
+    inset 0 2px 5px rgba(255, 240, 160, 0.3);
+  z-index: 16;
+}
+
+/* ── Center label ────────────────────────────────────────────────────────── */
+.vt-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 152px;
+  height: 152px;
+  margin-top: -76px;
+  margin-left: -76px;
   border-radius: 50%;
   overflow: hidden;
-  background: 
-    linear-gradient(135deg, var(--vintage-warm-white) 0%, var(--vintage-cream) 100%);
-  border: 6px solid var(--vintage-gold);
-  box-shadow: 
-    0 0 30px rgba(212, 175, 55, 0.4),
-    inset 0 0 20px rgba(139, 69, 19, 0.05);
+  border: 5px solid #d4af37;
+  box-shadow:
+    0 0 0 2px rgba(100, 60, 20, 0.15),
+    0 0 28px rgba(212, 175, 55, 0.35),
+    inset 0 0 18px rgba(100, 60, 20, 0.06);
+  background: linear-gradient(135deg, #fefcf7 0%, #f5f1e8 100%);
   z-index: 10;
 }
 
-.record-album-art {
+.vt-label__art {
   width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: 50%;
-  filter: sepia(0.2) contrast(1.1) brightness(1.05);
+  filter: sepia(0.15) contrast(1.08) brightness(1.04);
+  display: block;
 }
 
-.record-album-art--empty {
+.vt-label__art--empty {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: 
-    linear-gradient(135deg, var(--vintage-beige) 0%, var(--vintage-tan) 100%);
-  color: var(--vintage-bronze);
+  background: linear-gradient(135deg, #f5f1e8 0%, #e8dcc8 100%);
+  color: #b87333;
+  font-size: 44px;
+  font-family: Georgia, serif;
+  text-shadow: 0 2px 8px rgba(100, 60, 20, 0.18);
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
 }
 
-.vintage-music-note {
-  font-size: 48px;
-  font-weight: bold;
-  text-shadow: 0 2px 8px rgba(139, 69, 19, 0.2);
-}
-
-.record-song-overlay {
+/* Song info pill — sits at the bottom of the label */
+.vt-label__info {
   position: absolute;
-  bottom: 8px;
-  left: 8px;
-  right: 8px;
-  background: 
-    linear-gradient(135deg, rgba(248, 244, 237, 0.95) 0%, rgba(245, 241, 232, 0.9) 100%);
-  backdrop-filter: blur(8px);
-  border-radius: 12px;
-  padding: 8px 12px;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+  background: rgba(254, 252, 247, 0.92);
+  backdrop-filter: blur(6px);
+  border-radius: 10px;
+  padding: 6px 10px;
   text-align: center;
-  box-shadow: 0 2px 12px rgba(139, 69, 19, 0.1);
-  border: 1px solid rgba(212, 175, 55, 0.2);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  box-shadow: 0 2px 10px rgba(100, 60, 20, 0.1);
 }
 
-.record-song-title {
-  font-size: 14px;
+.vt-label__title {
+  display: block;
+  font-size: 11px;
   font-weight: 700;
-  color: var(--vintage-coffee);
+  font-family: Georgia, serif;
+  color: #8b4513;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-family: 'Georgia', serif;
-  text-shadow: 0 1px 2px rgba(139, 69, 19, 0.1);
+  line-height: 1.3;
 }
 
-.record-song-artist {
-  font-size: 12px;
-  color: var(--vintage-cocoa);
-  margin-top: 2px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.vt-label__artist {
+  display: block;
+  font-size: 10px;
   font-style: italic;
+  color: #a0522d;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 1px;
+  line-height: 1.2;
 }
 
-.record-spindle {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: 
-    radial-gradient(circle, var(--vintage-bronze) 0%, var(--vintage-copper) 100%);
-  border: 3px solid var(--vintage-gold);
-  box-shadow: 
-    0 0 0 2px rgba(139, 69, 19, 0.2),
-    inset 0 2px 6px rgba(212, 175, 55, 0.3);
-  z-index: 15;
-}
-
-.turntable-platter {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 360px;
-  height: 360px;
-  border-radius: 50%;
-  background: 
-    radial-gradient(circle at 30% 30%, var(--vintage-tan) 0%, var(--vintage-sand) 100%);
-  box-shadow: inset 0 0 40px rgba(139, 69, 19, 0.1);
-  z-index: 1;
-}
-
-/* ── VINTAGE CONTROL PANEL ───────────────────────────────────────────────── */
-.vintage-control-panel {
+/* ── Controls card ───────────────────────────────────────────────────────── */
+.vt-controls {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
+  gap: 20px;
   width: 100%;
-  max-width: 420px;
-  background: 
-    linear-gradient(145deg, var(--vintage-warm-white) 0%, var(--vintage-beige) 100%);
-  border-radius: 20px;
-  padding: 24px;
-  box-shadow: 
-    0 8px 32px rgba(139, 69, 19, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  border: 2px solid var(--vintage-tan);
+  max-width: 400px;
+  padding: 22px 24px 20px;
+  border-radius: 22px;
+  background: linear-gradient(145deg, #fefcf7 0%, #f5f1e8 100%);
+  border: 2px solid rgba(210, 180, 140, 0.45);
+  box-shadow:
+    0 10px 36px rgba(100, 60, 20, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
   position: relative;
   z-index: 10;
 }
 
-.vintage-control-panel::before {
+/* Paper grain overlay */
+.vt-controls::before {
   content: '';
   position: absolute;
   inset: 0;
+  border-radius: 20px;
   background-image: var(--paper-texture);
-  opacity: 0.3;
-  border-radius: 18px;
+  opacity: 0.25;
   pointer-events: none;
 }
 
-/* ── PROGRESS DISPLAY ────────────────────────────────────────────────────── */
-.vintage-progress-display {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.progress-time-display {
+/* ── Progress bar ────────────────────────────────────────────────────────── */
+.vt-progress {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-family: 'Georgia', serif;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--vintage-coffee);
-}
-
-.time-separator {
-  color: var(--vintage-gold);
-  font-weight: bold;
-}
-
-.vintage-progress-track {
-  position: relative;
+  gap: 12px;
   width: 100%;
-  height: 8px;
-  background: 
-    linear-gradient(90deg, var(--vintage-tan) 0%, var(--vintage-sand) 100%);
-  border-radius: 4px;
-  box-shadow: inset 0 2px 6px rgba(139, 69, 19, 0.15);
-  border: 1px solid var(--vintage-bronze);
 }
 
-.vintage-progress-slider {
+.vt-progress__time {
+  font-size: 12px;
+  font-family: Georgia, serif;
+  font-weight: 600;
+  color: #8b4513;
+  min-width: 36px;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.vt-progress__track {
+  flex: 1;
+  position: relative;
+  height: 7px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #d2b48c 0%, #c4a882 100%);
+  border: 1px solid #b89a6e;
+  box-shadow: inset 0 2px 5px rgba(100, 60, 20, 0.14);
+  cursor: pointer;
+}
+
+.vt-progress__fill {
   position: absolute;
-  top: 0;
+  inset-block: 0;
   left: 0;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #d4af37 0%, #b5a642 100%);
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.45);
+  transition: width 0.1s linear;
+  pointer-events: none;
+}
+
+.vt-progress__input {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   opacity: 0;
   cursor: pointer;
+  margin: 0;
 }
 
-.progress-fill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  background: 
-    linear-gradient(90deg, var(--vintage-gold) 0%, var(--vintage-brass) 100%);
-  border-radius: 4px;
-  box-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
-  transition: width 0.1s ease;
-}
-
-/* ── TRANSPORT CONTROLS ──────────────────────────────────────────────────── */
-.vintage-transport-controls {
+/* ── Transport buttons ───────────────────────────────────────────────────── */
+.vt-transport {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
 }
 
-.vintage-control-btn {
-  background: 
-    linear-gradient(145deg, var(--vintage-cream) 0%, var(--vintage-beige) 100%);
-  border: 3px solid var(--vintage-bronze);
-  color: var(--vintage-coffee);
-  font-size: 20px;
-  cursor: pointer;
-  padding: 12px;
-  border-radius: 50%;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  line-height: 1;
+/* Base button */
+.vt-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 56px;
-  height: 56px;
-  box-shadow: 
-    0 4px 16px rgba(139, 69, 19, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  border: 2.5px solid #c4a882;
+  background: linear-gradient(145deg, #fefcf7 0%, #f0e8d8 100%);
+  color: #8b4513;
+  box-shadow:
+    0 4px 14px rgba(100, 60, 20, 0.13),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease, background 0.22s ease;
   position: relative;
   overflow: hidden;
 }
 
-.vintage-control-btn::before {
+/* Gloss highlight */
+.vt-btn::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: 
-    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
   border-radius: 50%;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.32) 0%, transparent 65%);
+  pointer-events: none;
 }
 
-.vintage-control-btn:hover::before {
-  opacity: 1;
-}
-
-.vintage-control-btn:hover {
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 
-    0 6px 20px rgba(139, 69, 19, 0.2),
+.vt-btn:hover {
+  transform: translateY(-2px) scale(1.06);
+  border-color: #d4af37;
+  box-shadow:
+    0 7px 20px rgba(100, 60, 20, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  border-color: var(--vintage-gold);
 }
 
-.vintage-control-btn:active {
-  transform: translateY(0) scale(0.98);
+.vt-btn:active {
+  transform: translateY(0) scale(0.97);
+  box-shadow: 0 2px 8px rgba(100, 60, 20, 0.12);
 }
 
-.play-btn {
-  background: 
-    linear-gradient(145deg, var(--vintage-gold) 0%, var(--vintage-brass) 100%);
-  color: var(--vintage-warm-white);
-  width: 72px;
-  height: 72px;
-  font-size: 28px;
-  border-color: var(--vintage-bronze);
-  box-shadow: 
-    0 6px 24px rgba(212, 175, 55, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+/* Small secondary buttons */
+.vt-btn--sm {
+  width: 42px;
+  height: 42px;
+  font-size: 16px;
+  border-width: 2px;
 }
 
-.play-btn:hover {
-  background: 
-    linear-gradient(145deg, var(--vintage-brass) 0%, var(--vintage-copper) 100%);
+/* Active state (shuffle / repeat on) */
+.vt-btn--active {
+  background: linear-gradient(145deg, #d4af37 0%, #b5a642 100%);
+  color: #fefcf7;
+  border-color: #9a8030;
+  box-shadow:
+    0 4px 16px rgba(212, 175, 55, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.vt-btn--active:hover {
+  background: linear-gradient(145deg, #c9a430 0%, #a89438 100%);
+}
+
+/* Play / Pause — larger, gold */
+.vt-btn--play {
+  width: 68px;
+  height: 68px;
+  font-size: 26px;
+  background: linear-gradient(145deg, #d4af37 0%, #b5a642 100%);
+  color: #fefcf7;
+  border-color: #9a8030;
+  box-shadow:
+    0 6px 22px rgba(212, 175, 55, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.38);
+}
+
+.vt-btn--play:hover {
+  background: linear-gradient(145deg, #c9a430 0%, #a89438 100%);
   transform: translateY(-3px) scale(1.08);
-  box-shadow: 
-    0 8px 28px rgba(212, 175, 55, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  box-shadow:
+    0 10px 28px rgba(212, 175, 55, 0.52),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
-.vintage-control-btn.active {
-  background: 
-    linear-gradient(145deg, var(--vintage-gold) 0%, var(--vintage-brass) 100%);
-  color: var(--vintage-warm-white);
-  border-color: var(--vintage-bronze);
-  box-shadow: 
-    0 4px 16px rgba(212, 175, 55, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
-}
-
-.btn-icon {
-  filter: drop-shadow(0 1px 2px rgba(139, 69, 19, 0.2));
-}
-
-/* ── VOLUME CONTROL ──────────────────────────────────────────────────────── */
-.vintage-volume-control {
+/* ── Volume control ──────────────────────────────────────────────────────── */
+.vt-volume {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   width: 100%;
-  max-width: 300px;
+  max-width: 280px;
 }
 
-.volume-icon {
-  font-size: 18px;
-  color: var(--vintage-bronze);
-  filter: drop-shadow(0 1px 2px rgba(139, 69, 19, 0.1));
+.vt-volume__icon {
+  font-size: 16px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 1px 2px rgba(100, 60, 20, 0.1));
 }
 
-.volume-slider-container {
+.vt-volume__track {
   flex: 1;
   position: relative;
-  height: 8px;
-  background: 
-    linear-gradient(90deg, var(--vintage-tan) 0%, var(--vintage-sand) 100%);
+  height: 7px;
   border-radius: 4px;
-  box-shadow: inset 0 2px 6px rgba(139, 69, 19, 0.15);
-  border: 1px solid var(--vintage-bronze);
+  background: linear-gradient(90deg, #d2b48c 0%, #c4a882 100%);
+  border: 1px solid #b89a6e;
+  box-shadow: inset 0 2px 5px rgba(100, 60, 20, 0.14);
+  cursor: pointer;
 }
 
-.vintage-volume-slider {
+.vt-volume__fill {
   position: absolute;
-  top: 0;
+  inset-block: 0;
   left: 0;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #d4af37 0%, #b5a642 100%);
+  box-shadow: 0 0 6px rgba(212, 175, 55, 0.35);
+  pointer-events: none;
+  transition: width 0.05s linear;
+}
+
+.vt-volume__input {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   opacity: 0;
   cursor: pointer;
+  margin: 0;
 }
 
-/* ── RESPONSIVE DESIGN ───────────────────────────────────────────────────── */
-@media (max-width: 768px) {
-  .vintage-turntable {
-    padding: 24px 20px;
-    gap: 24px;
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 520px) {
+  .vt-platter {
+    width: 300px;
+    height: 300px;
   }
-  
-  .turntable-base {
-    width: 320px;
-    height: 320px;
+
+  .vt-record {
+    width: 268px;
+    height: 268px;
+    margin-top: -134px;
+    margin-left: -134px;
   }
-  
-  .vintage-vinyl-record {
-    width: 260px;
-    height: 260px;
-  }
-  
-  .record-center-label {
+
+  .vt-label {
     width: 120px;
     height: 120px;
+    margin-top: -60px;
+    margin-left: -60px;
   }
-  
-  .vintage-music-note {
-    font-size: 36px;
+
+  .vt-label__art--empty {
+    font-size: 34px;
   }
-  
-  .vintage-control-panel {
+
+  .vt-arm {
+    width: 110px;
+    height: 130px;
+  }
+
+  .vt-controls {
     max-width: 320px;
-    padding: 20px;
+    padding: 18px 18px 16px;
+    gap: 16px;
   }
-  
-  .vintage-transport-controls {
-    gap: 12px;
+
+  .vt-btn--play {
+    width: 58px;
+    height: 58px;
+    font-size: 22px;
   }
-  
-  .vintage-control-btn {
-    width: 48px;
-    height: 48px;
+
+  .vt-btn {
+    width: 46px;
+    height: 46px;
     font-size: 18px;
   }
-  
-  .play-btn {
-    width: 60px;
-    height: 60px;
-    font-size: 24px;
+
+  .vt-btn--sm {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
   }
 }
