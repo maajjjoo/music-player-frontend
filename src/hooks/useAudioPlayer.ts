@@ -68,11 +68,29 @@ export function useAudioPlayer(
 
   const play = useCallback((url: string) => {
     const audio = audioRef.current;
+    
+    // Pause and reset before loading new src
+    audio.pause();
+    
     if (audio.src !== url) {
       audio.src = url;
       audio.load();
     }
-    audio.play().catch(console.error);
+
+    // Wait for canplay before calling play
+    const attemptPlay = () => {
+      audio.play().catch((err: Error) => {
+        if (err.name !== 'AbortError') {
+          console.error('Playback error:', err);
+        }
+      });
+    };
+
+    if (audio.readyState >= 3) {
+      attemptPlay();
+    } else {
+      audio.addEventListener('canplay', attemptPlay, { once: true });
+    }
   }, []);
 
   const togglePlay = useCallback(() => {
