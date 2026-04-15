@@ -10,8 +10,8 @@ interface VinylProps {
 
 // ── Utility: Dominant Color Extractor ────────────────────────────────────────
 const DominantColorExtractor = {
-  SIZE: 20,
-  DEFAULT: '#e8e0d8',
+  SIZE: 40,
+  DEFAULT: '#a855f7',
 
   extract(img: HTMLImageElement): string {
     try {
@@ -22,16 +22,50 @@ const DominantColorExtractor = {
       if (!ctx) return this.DEFAULT;
       ctx.drawImage(img, 0, 0, this.SIZE, this.SIZE);
       const data = ctx.getImageData(0, 0, this.SIZE, this.SIZE).data;
+
       let r = 0, g = 0, b = 0;
       for (let i = 0; i < data.length; i += 4) {
         r += data[i]; g += data[i + 1]; b += data[i + 2];
       }
       const n = data.length / 4;
-      // Lighten toward white for a soft background tint
-      const lr = Math.round((r / n) * 0.35 + 255 * 0.65);
-      const lg = Math.round((g / n) * 0.35 + 255 * 0.65);
-      const lb = Math.round((b / n) * 0.35 + 255 * 0.65);
-      return `rgb(${lr},${lg},${lb})`;
+      r = r / n / 255;
+      g = g / n / 255;
+      b = b / n / 255;
+
+      // RGB → HSL
+      const max = Math.max(r, g, b), min = Math.min(r, g, b);
+      const d = max - min;
+      let h = 0, s = 0;
+      const l = (max + min) / 2;
+
+      if (d > 0) {
+        s = d / (1 - Math.abs(2 * l - 1));
+        switch (max) {
+          case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+          case g: h = ((b - r) / d + 2) / 6; break;
+          case b: h = ((r - g) / d + 4) / 6; break;
+        }
+      }
+
+      // Clamp: saturation maxed out, lightness between 35–55% for vivid but readable bg
+      const finalS = Math.min(1, s < 0.2 ? 0.6 : s * 1.8);
+      const finalL = Math.max(0.35, Math.min(0.55, l));
+
+      // HSL → RGB
+      const hue2rgb = (p: number, q: number, t: number) => {
+        if (t < 0) t += 1; if (t > 1) t -= 1;
+        if (t < 1/6) return p + (q - p) * 6 * t;
+        if (t < 1/2) return q;
+        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+        return p;
+      };
+      const q = finalL < 0.5 ? finalL * (1 + finalS) : finalL + finalS - finalL * finalS;
+      const p = 2 * finalL - q;
+      const fr = Math.round(hue2rgb(p, q, h + 1/3) * 255);
+      const fg = Math.round(hue2rgb(p, q, h) * 255);
+      const fb = Math.round(hue2rgb(p, q, h - 1/3) * 255);
+
+      return `rgb(${fr},${fg},${fb})`;
     } catch {
       return this.DEFAULT;
     }
