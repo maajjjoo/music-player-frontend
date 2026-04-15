@@ -62,6 +62,10 @@ html, body, #root {
   
   /* Paper Texture Effect */
   --paper-texture: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f5f1e8' fill-opacity='0.03'%3E%3Ccircle cx='7' cy='7' r='1'/%3E%3Ccircle cx='53' cy='53' r='1'/%3E%3Ccircle cx='13' cy='43' r='1'/%3E%3Ccircle cx='47' cy='17' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+
+  /* Typography */
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-display: "Playfair Display", Georgia, "Times New Roman", serif;
 }
 
 body {
@@ -73,7 +77,7 @@ body {
     radial-gradient(ellipse at 50% 50%, rgba(200, 213, 185, 0.05) 0%, transparent 70%);
   background-attachment: fixed;
   color: var(--text-primary);
-  font-family: 'Georgia', 'Times New Roman', serif;
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   font-weight: 400;
 }

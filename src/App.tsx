@@ -12,6 +12,7 @@ export default function App() {
   const playlist = usePlaylist();
   const [bgColor, setBgColor] = useState('#e8d5ff');
   const [isPlaylistOpen, setIsPlaylistOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const handleSongEnded = useCallback(() => {
     const next = playlist.playNext();
@@ -87,30 +88,17 @@ export default function App() {
         <section className="console__frame">
           <header className="console__top">
             <div className="console__brand" aria-label="Brand">
-              <div className="console__mark" aria-hidden="true">
-                ♫
-              </div>
+              <div className="console__mark" aria-hidden="true" />
               <div className="console__wordmark">
                 <div className="console__title">Vinyl Atelier</div>
-                <div className="console__subtitle">A warm, modern turntable UI</div>
+                <div className="console__subtitle">Turntable player</div>
               </div>
             </div>
 
             <div className="console__topRight">
-              <button
-                className={`console__queueBtn ${isPlaylistOpen ? 'console__queueBtn--open' : ''}`}
-                onClick={() => setIsPlaylistOpen((v) => !v)}
-                aria-label={isPlaylistOpen ? 'Hide playlist' : 'Show playlist'}
-                aria-expanded={isPlaylistOpen}
-              >
-                <span className="console__queueIcon" aria-hidden="true">
-                  ⟡
-                </span>
-                <span className="console__queueText">Queue</span>
-                <span className="console__queueCount" aria-label="Queue size">
-                  {playlist.songs.length}
-                </span>
-              </button>
+              <div className="console__statusPill" aria-label="Queue size">
+                {playlist.songs.length} in queue
+              </div>
             </div>
           </header>
 
@@ -135,41 +123,89 @@ export default function App() {
               />
             </div>
 
-            <aside className="console__side">
-              <div className="console__crate">
-                <div className="console__crateTitle">Crate dig</div>
-                <div className="console__crateHint">Search & place records in your queue.</div>
-                <SearchBar
-                  query={playlist.searchQuery}
-                  onQueryChange={playlist.setSearchQuery}
-                  onAddSong={playlist.addToEnd}
-                  onAddAtPosition={handleAddAtPosition}
-                  onPlayNow={handlePlayNow}
-                  queueSize={playlist.songs.length}
-                  onAddToStart={playlist.addToStart}
-                />
-              </div>
-
-              <div
-                className={`console__playlistFlyout ${isPlaylistOpen ? 'console__playlistFlyout--open' : ''}`}
-                role="dialog"
-                aria-label="Playlist"
+            <div className="console__dock" aria-label="Actions">
+              <button
+                className={`dockBtn ${isSearchOpen ? 'dockBtn--active' : ''}`}
+                onClick={() => {
+                  setIsSearchOpen((v) => !v);
+                  setIsPlaylistOpen(false);
+                }}
+                aria-expanded={isSearchOpen}
               >
-                <div className="console__playlistFlyoutInner">
-                  <Playlist
-                    songs={filteredSongs}
-                    currentSong={playlist.currentSong}
-                    showFavoritesOnly={playlist.showFavoritesOnly}
-                    onPlay={handlePlaySong}
-                    onRemove={playlist.removeSong}
-                    onToggleFavorite={playlist.toggleFavorite}
-                    onToggleFavoritesFilter={playlist.toggleFavoritesFilter}
-                    onReorder={playlist.reorderSong}
-                    onClose={() => setIsPlaylistOpen(false)}
-                  />
+                Browse & add
+              </button>
+              <button
+                className={`dockBtn ${isPlaylistOpen ? 'dockBtn--active' : ''}`}
+                onClick={() => {
+                  setIsPlaylistOpen((v) => !v);
+                  setIsSearchOpen(false);
+                }}
+                aria-expanded={isPlaylistOpen}
+              >
+                Playlist
+                <span className="dockBtn__count">{playlist.songs.length}</span>
+              </button>
+            </div>
+
+            <div
+              className={`console__modalOverlay ${
+                isSearchOpen || isPlaylistOpen ? 'console__modalOverlay--open' : ''
+              }`}
+              onMouseDown={() => {
+                setIsSearchOpen(false);
+                setIsPlaylistOpen(false);
+              }}
+              aria-hidden={!(isSearchOpen || isPlaylistOpen)}
+            >
+              <div
+                className="console__modal"
+                role="dialog"
+                aria-label={isSearchOpen ? 'Search songs' : 'Playlist'}
+                onMouseDown={(e) => e.stopPropagation()}
+              >
+                <div className="console__modalTop">
+                  <div className="console__modalTitle">
+                    {isSearchOpen ? 'Browse & add records' : 'Playlist'}
+                  </div>
+                  <button
+                    className="console__modalClose"
+                    onClick={() => {
+                      setIsSearchOpen(false);
+                      setIsPlaylistOpen(false);
+                    }}
+                    aria-label="Close"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <div className="console__modalBody">
+                  {isSearchOpen ? (
+                    <SearchBar
+                      query={playlist.searchQuery}
+                      onQueryChange={playlist.setSearchQuery}
+                      onAddSong={playlist.addToEnd}
+                      onAddAtPosition={handleAddAtPosition}
+                      onPlayNow={handlePlayNow}
+                      queueSize={playlist.songs.length}
+                      onAddToStart={playlist.addToStart}
+                    />
+                  ) : (
+                    <Playlist
+                      songs={filteredSongs}
+                      currentSong={playlist.currentSong}
+                      showFavoritesOnly={playlist.showFavoritesOnly}
+                      onPlay={handlePlaySong}
+                      onRemove={playlist.removeSong}
+                      onToggleFavorite={playlist.toggleFavorite}
+                      onToggleFavoritesFilter={playlist.toggleFavoritesFilter}
+                      onReorder={playlist.reorderSong}
+                      onClose={() => setIsPlaylistOpen(false)}
+                    />
+                  )}
                 </div>
               </div>
-            </aside>
+            </div>
           </div>
         </section>
       </main>
