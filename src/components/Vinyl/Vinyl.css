@@ -1,191 +1,166 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   VINYL PLAYER  —  vp-* namespace
-   Dark background · violet/rose accent · high contrast · beautiful
+   VINYL TURNTABLE  —  vt-* namespace  ·  light theme
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ── Stage ───────────────────────────────────────────────────────────────── */
-.vp {
+.vt {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 32px;
+  gap: 24px;
   width: 100%;
-  max-width: 460px;
-  padding: 4px 0;
+  padding: 0;
 }
 
 /* ── Song meta ───────────────────────────────────────────────────────────── */
-.vp__meta {
+.vt__meta {
   text-align: center;
-  max-width: 380px;
+  width: 100%;
   padding: 0 8px;
 }
 
-.vp__title {
+.vt__title {
   font-family: var(--font-display);
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 700;
   color: var(--text-1);
-  letter-spacing: -0.5px;
+  letter-spacing: -0.4px;
   line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  /* Gradient text */
-  background: linear-gradient(135deg, #f0eeff 0%, #c4b5fd 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
-.vp__artist {
+.vt__artist {
   font-size: 14px;
-  font-weight: 400;
   color: var(--text-2);
-  margin-top: 6px;
-  font-style: italic;
-  letter-spacing: 0.3px;
+  margin-top: 5px;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* ── Scene (record + tonearm) ────────────────────────────────────────────── */
-.vp__scene {
+/* ── Scene ───────────────────────────────────────────────────────────────── */
+.vt__scene {
   position: relative;
-  width: 360px;
-  height: 360px;
+  width: 320px;
+  height: 320px;
   flex-shrink: 0;
 }
 
-/* ── Outer glow ring ─────────────────────────────────────────────────────── */
-.vp__glow-ring {
+/* ── Platter base ────────────────────────────────────────────────────────── */
+.vt__platter {
   position: absolute;
-  inset: -24px;
+  inset: -12px;
   border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(167, 139, 250, 0.12) 0%,
-    rgba(244, 114, 182, 0.06) 50%,
-    transparent 70%
-  );
-  pointer-events: none;
-  transition: opacity 0.6s ease;
-  opacity: 0.6;
-}
-
-.vp--playing .vp__glow-ring {
-  opacity: 1;
-  animation: glowPulse 2.8s ease-in-out infinite;
-}
-
-@keyframes glowPulse {
-  0%, 100% { transform: scale(1);    opacity: 0.7; }
-  50%       { transform: scale(1.06); opacity: 1;   }
+  background: radial-gradient(circle at 38% 34%, #e8e4dc 0%, #d4cfc6 100%);
+  box-shadow:
+    0 0 0 2px rgba(0,0,0,0.06),
+    0 16px 48px rgba(0,0,0,0.12),
+    inset 0 2px 6px rgba(255,255,255,0.6);
 }
 
 /* ── Tonearm ─────────────────────────────────────────────────────────────── */
-.vp__arm {
+.vt__arm {
   position: absolute;
-  top: -16px;
-  right: -20px;
-  width: 120px;
-  height: 140px;
-  transform-origin: 16px 124px;
-  transform: rotate(-30deg);
-  transition: transform 1.2s cubic-bezier(0.34, 1.2, 0.64, 1);
+  top: -14px;
+  right: -18px;
+  width: 110px;
+  height: 130px;
+  transform-origin: 14px 116px;
+  transform: rotate(-28deg);
+  transition: transform 1.1s cubic-bezier(0.34, 1.2, 0.64, 1);
   z-index: 20;
 }
 
-.vp__arm--playing {
+.vt__arm--on {
   transform: rotate(-5deg);
 }
 
-.vp__arm-pivot {
+.vt__arm-pivot {
   position: absolute;
   bottom: 0;
-  left: 2px;
-  width: 26px;
-  height: 26px;
+  left: 0;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #c4b5fd 0%, #7c3aed 60%, #4c1d95 100%);
-  border: 2px solid rgba(167, 139, 250, 0.5);
-  box-shadow:
-    0 0 12px rgba(167, 139, 250, 0.4),
-    inset 0 1px 4px rgba(255, 255, 255, 0.2);
+  background: radial-gradient(circle at 35% 30%, #d0c8b8 0%, #a09080 100%);
+  border: 1.5px solid rgba(0,0,0,0.15);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.18), inset 0 1px 3px rgba(255,255,255,0.4);
 }
 
-.vp__arm-rod {
+.vt__arm-rod {
   position: absolute;
-  bottom: 20px;
-  left: 13px;
+  bottom: 18px;
+  left: 10px;
   width: 4px;
-  height: 106px;
+  height: 100px;
   border-radius: 2px;
-  background: linear-gradient(180deg, #c4b5fd 0%, #7c3aed 60%, #5b21b6 100%);
+  background: linear-gradient(180deg, #c8c0b0 0%, #908070 100%);
   transform: rotate(16deg);
   transform-origin: bottom center;
-  box-shadow: 0 0 8px rgba(167, 139, 250, 0.3);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.14);
 }
 
-.vp__arm-head {
+.vt__arm-head {
   position: absolute;
   top: 0;
   right: 2px;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   border-radius: 50% 50% 50% 0;
-  background: linear-gradient(135deg, #f472b6 0%, #a78bfa 100%);
-  border: 2px solid rgba(244, 114, 182, 0.5);
-  box-shadow: 0 0 10px rgba(244, 114, 182, 0.4);
+  background: linear-gradient(135deg, #c8c0b0 0%, #908070 100%);
+  border: 1.5px solid rgba(0,0,0,0.12);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.16);
 }
 
-/* ── The Record ──────────────────────────────────────────────────────────── */
-.vp__record {
+/* ── Vinyl record ────────────────────────────────────────────────────────── */
+.vt__record {
   position: absolute;
   inset: 0;
   border-radius: 50%;
   will-change: transform;
   z-index: 5;
 
-  /* Deep black vinyl with subtle groove rings */
   background: radial-gradient(
     circle,
-    #111118 0%,
-    #1a1a24 10%,
-    #111118 11%,
-    #1a1a24 20%,
-    #111118 21%,
-    #1a1a24 30%,
-    #111118 31%,
-    #1a1a24 40%,
-    #111118 41%,
-    #1a1a24 50%,
-    #111118 51%,
-    #1a1a24 60%,
-    #111118 61%,
-    #1a1a24 70%,
-    #111118 71%,
-    #1a1a24 80%,
-    #111118 81%,
-    #1a1a24 100%
+    #111 0%,
+    #1e1e1e 10%,
+    #111 11%,
+    #1e1e1e 20%,
+    #111 21%,
+    #1e1e1e 30%,
+    #111 31%,
+    #1e1e1e 40%,
+    #111 41%,
+    #1e1e1e 50%,
+    #111 51%,
+    #1e1e1e 60%,
+    #111 61%,
+    #1e1e1e 70%,
+    #111 71%,
+    #1e1e1e 80%,
+    #111 81%,
+    #1e1e1e 100%
   );
 
   box-shadow:
-    0 30px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 1px rgba(167, 139, 250, 0.08),
-    inset 0 0 60px rgba(0, 0, 0, 0.4);
+    0 20px 60px rgba(0,0,0,0.35),
+    0 0 0 1px rgba(0,0,0,0.2),
+    inset 0 0 40px rgba(0,0,0,0.3);
 
-  transition: box-shadow 0.8s ease;
+  transition: box-shadow 0.6s ease;
 }
 
-.vp--playing .vp__record {
+.vt--playing .vt__record {
   box-shadow:
-    0 30px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 1px rgba(167, 139, 250, 0.15),
-    0 0 60px rgba(167, 139, 250, 0.12),
-    inset 0 0 60px rgba(0, 0, 0, 0.4);
+    0 24px 70px rgba(0,0,0,0.4),
+    0 0 0 1px rgba(0,0,0,0.2),
+    0 0 40px rgba(var(--accent-rgb, 224,92,58), 0.12),
+    inset 0 0 40px rgba(0,0,0,0.3);
 }
 
-/* Fine groove texture */
-.vp__grooves {
+.vt__grooves {
   position: absolute;
   inset: 0;
   border-radius: 50%;
@@ -193,47 +168,47 @@
     circle at center,
     transparent 0px,
     transparent 3px,
-    rgba(255, 255, 255, 0.015) 3px,
-    rgba(255, 255, 255, 0.015) 4px
+    rgba(255,255,255,0.018) 3px,
+    rgba(255,255,255,0.018) 4px
   );
 }
 
-/* Rotating sheen */
-.vp__sheen {
+.vt__sheen {
   position: absolute;
   inset: 0;
   border-radius: 50%;
   background: conic-gradient(
     from 0deg,
     transparent 0deg,
-    rgba(255, 255, 255, 0.04) 30deg,
+    rgba(255,255,255,0.05) 30deg,
     transparent 60deg,
-    rgba(255, 255, 255, 0.02) 120deg,
+    rgba(255,255,255,0.02) 150deg,
     transparent 180deg,
-    rgba(255, 255, 255, 0.04) 240deg,
+    rgba(255,255,255,0.05) 240deg,
     transparent 300deg,
-    rgba(255, 255, 255, 0.02) 330deg,
     transparent 360deg
   );
   pointer-events: none;
 }
 
 /* ── Center label ────────────────────────────────────────────────────────── */
-.vp__label {
+.vt__label {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 148px;
-  height: 148px;
-  margin-top: -74px;
-  margin-left: -74px;
+  width: 128px;
+  height: 128px;
+  margin-top: -64px;
+  margin-left: -64px;
   border-radius: 50%;
   overflow: hidden;
   z-index: 10;
-  background: #1a1a24;
+  border: 4px solid rgba(255,255,255,0.15);
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.4);
+  background: #1a1a1a;
 }
 
-.vp__label-art {
+.vt__label-art {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -241,87 +216,62 @@
   display: block;
 }
 
-.vp__label-empty {
+.vt__label-empty {
   width: 100%;
   height: 100%;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 48px;
-  background: radial-gradient(circle at 40% 35%, #2d2040 0%, #1a1a24 100%);
-  color: rgba(167, 139, 250, 0.5);
-}
-
-/* Gold ring around label */
-.vp__label-ring {
-  position: absolute;
-  inset: -4px;
-  border-radius: 50%;
-  border: 4px solid transparent;
-  background:
-    linear-gradient(var(--bg-card, #16161f), var(--bg-card, #16161f)) padding-box,
-    linear-gradient(135deg, #f5c842 0%, #a78bfa 50%, #f472b6 100%) border-box;
-  pointer-events: none;
-  box-shadow:
-    0 0 20px rgba(245, 200, 66, 0.25),
-    0 0 40px rgba(167, 139, 250, 0.15);
+  font-size: 40px;
+  color: rgba(255,255,255,0.2);
+  background: radial-gradient(circle, #2a2a2a 0%, #111 100%);
 }
 
 /* Spindle */
-.vp__spindle {
+.vt__spindle {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 16px;
-  height: 16px;
-  margin-top: -8px;
-  margin-left: -8px;
+  width: 14px;
+  height: 14px;
+  margin-top: -7px;
+  margin-left: -7px;
   border-radius: 50%;
-  background: radial-gradient(circle, #f5c842 0%, #c9a227 100%);
-  border: 2px solid rgba(245, 200, 66, 0.4);
-  box-shadow: 0 0 8px rgba(245, 200, 66, 0.4);
+  background: radial-gradient(circle, #d0c8b8 0%, #908070 100%);
+  border: 2px solid rgba(255,255,255,0.2);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
   z-index: 16;
 }
 
-/* ── Controls card ───────────────────────────────────────────────────────── */
-.vp__card {
+/* ── Controls ────────────────────────────────────────────────────────────── */
+.vt__controls {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
   width: 100%;
-  max-width: 400px;
-  padding: 24px 26px 22px;
-  border-radius: 24px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.4),
-    0 0 0 1px rgba(255, 255, 255, 0.03) inset;
-  position: relative;
-  z-index: 10;
 }
 
-/* ── Progress / Volume track ─────────────────────────────────────────────── */
-.vp__progress {
+/* Progress row */
+.vt__progress {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
 }
 
-.vp__time {
-  font-size: 12px;
+.vt__time {
+  font-size: 11px;
   font-weight: 500;
   color: var(--text-3);
-  min-width: 34px;
+  min-width: 32px;
   font-variant-numeric: tabular-nums;
   flex-shrink: 0;
-  letter-spacing: 0.3px;
 }
 
-.vp__track {
+/* Shared bar (progress + volume) */
+.vt__bar {
   flex: 1;
   position: relative;
   height: 5px;
@@ -329,175 +279,142 @@
   cursor: pointer;
 }
 
-.vp__track--vol {
-  max-width: 200px;
+.vt__bar--vol {
+  max-width: 180px;
 }
 
-.vp__track-bg {
+.vt__bar-track {
   position: absolute;
   inset: 0;
   border-radius: 3px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(0,0,0,0.1);
 }
 
-.vp__track-fill {
+.vt__bar-fill {
   position: absolute;
   inset-block: 0;
   left: 0;
   border-radius: 3px;
-  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
-  box-shadow: 0 0 10px var(--accent-glow);
+  background: var(--accent);
   pointer-events: none;
-  transition: width 0.1s linear;
+  transition: width 0.08s linear;
 }
 
-.vp__track-input {
+.vt__bar-input {
   position: absolute;
-  inset: -6px 0;
+  inset: -8px 0;
   width: 100%;
-  height: calc(100% + 12px);
+  height: calc(100% + 16px);
   opacity: 0;
   cursor: pointer;
   margin: 0;
 }
 
-/* ── Transport buttons ───────────────────────────────────────────────────── */
-.vp__transport {
+/* Transport */
+.vt__transport {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
-/* Base button */
-.vp__btn {
+.vt__btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 52px;
-  height: 52px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  font-size: 20px;
+  font-size: 19px;
   line-height: 1;
-  border: 1px solid var(--border);
-  background: var(--bg-surface);
+  border: 1.5px solid var(--border);
+  background: var(--surface);
   color: var(--text-2);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s cubic-bezier(0.34, 1.4, 0.64, 1);
   position: relative;
   overflow: hidden;
 }
 
-.vp__btn::before {
+.vt__btn::before {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.08) 0%, transparent 60%);
+  background: radial-gradient(circle at 35% 28%, rgba(255,255,255,0.6) 0%, transparent 60%);
   pointer-events: none;
 }
 
-.vp__btn:hover {
-  border-color: rgba(167, 139, 250, 0.4);
+.vt__btn:hover {
+  border-color: rgba(0,0,0,0.18);
   color: var(--text-1);
-  background: var(--bg-raised);
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 12px var(--accent-glow);
+  transform: translateY(-2px) scale(1.06);
+  box-shadow: var(--shadow-md);
 }
 
-.vp__btn:active {
+.vt__btn:active {
   transform: translateY(0) scale(0.97);
+  box-shadow: var(--shadow-sm);
 }
 
-/* Ghost (shuffle/repeat) */
-.vp__btn--ghost {
-  width: 40px;
-  height: 40px;
-  font-size: 16px;
+/* Small ghost buttons */
+.vt__btn--sm {
+  width: 38px;
+  height: 38px;
+  font-size: 15px;
   background: transparent;
-  border-color: rgba(255, 255, 255, 0.06);
-  color: var(--text-3);
+  border-color: rgba(0,0,0,0.08);
   box-shadow: none;
+  color: var(--text-3);
 }
 
-.vp__btn--ghost:hover {
-  background: rgba(167, 139, 250, 0.08);
-  border-color: rgba(167, 139, 250, 0.3);
-  color: var(--accent);
+.vt__btn--sm:hover {
+  background: rgba(0,0,0,0.05);
+  color: var(--text-1);
   box-shadow: none;
-  transform: scale(1.08);
 }
 
 /* Active (shuffle/repeat on) */
-.vp__btn--on {
-  background: rgba(167, 139, 250, 0.12);
-  border-color: rgba(167, 139, 250, 0.4);
+.vt__btn--lit {
+  background: rgba(224,92,58,0.1);
+  border-color: rgba(224,92,58,0.3);
   color: var(--accent);
 }
 
-/* Play button — the hero */
-.vp__btn--play {
-  width: 72px;
-  height: 72px;
-  font-size: 28px;
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+/* Play — the hero button */
+.vt__btn--play {
+  width: 66px;
+  height: 66px;
+  font-size: 26px;
+  background: var(--accent);
   border: none;
   color: #fff;
-  box-shadow:
-    0 8px 28px var(--accent-glow),
-    0 4px 12px var(--accent-glow2);
+  box-shadow: 0 6px 24px rgba(224,92,58,0.38);
 }
 
-.vp__btn--play:hover {
-  background: linear-gradient(135deg, #b89dff 0%, #f687c8 100%);
+.vt__btn--play:hover {
+  background: #c94e2e;
   transform: translateY(-3px) scale(1.08);
-  box-shadow:
-    0 12px 36px var(--accent-glow),
-    0 6px 18px var(--accent-glow2);
+  box-shadow: 0 10px 32px rgba(224,92,58,0.48);
 }
 
-.vp__btn-play-icon {
-  display: block;
-  line-height: 1;
-}
-
-/* ── Volume ──────────────────────────────────────────────────────────────── */
-.vp__volume {
+/* Volume */
+.vt__volume {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
-  max-width: 280px;
+  max-width: 260px;
 }
 
-.vp__vol-icon {
-  font-size: 15px;
+.vt__vol-icon {
+  font-size: 14px;
   flex-shrink: 0;
-  opacity: 0.6;
+  opacity: 0.5;
 }
 
 /* ── Responsive ──────────────────────────────────────────────────────────── */
-@media (max-width: 500px) {
-  .vp__scene {
-    width: 290px;
-    height: 290px;
-  }
-
-  .vp__label {
-    width: 118px;
-    height: 118px;
-    margin-top: -59px;
-    margin-left: -59px;
-  }
-
-  .vp__title { font-size: 22px; }
-
-  .vp__card {
-    max-width: 320px;
-    padding: 20px 18px 18px;
-    gap: 16px;
-  }
-
-  .vp__btn--play { width: 60px; height: 60px; font-size: 24px; }
-  .vp__btn { width: 44px; height: 44px; font-size: 18px; }
-  .vp__btn--ghost { width: 34px; height: 34px; font-size: 14px; }
+@media (max-width: 900px) {
+  .vt__scene { width: 260px; height: 260px; }
+  .vt__label { width: 104px; height: 104px; margin-top: -52px; margin-left: -52px; }
+  .vt__title { font-size: 22px; }
 }
