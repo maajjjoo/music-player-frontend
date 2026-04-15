@@ -8,20 +8,9 @@
   flex-direction: column;
   overflow: hidden;
   position: relative;
-  background: linear-gradient(135deg, #faf5ff 0%, #fce7f3 25%, #e0f2fe 50%, #f0f9ff 75%, #faf5ff 100%);
-  background-size: 400% 400%;
-  animation: gradientShift 15s ease infinite;
-  transition: background 1.2s ease;
-  padding-bottom: 120px; /* Space for fixed player */
-}
-
-@keyframes gradientShift {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
+  background: var(--bg-tint, #a855f7);
+  transition: background 1.5s ease;
+  padding-bottom: 120px;
 }
 
 /* ── Dynamic tinted background ───────────────────────────────────────────── */
@@ -31,8 +20,9 @@
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse at 20% 50%, rgba(255,255,255,0.65) 0%, transparent 60%),
-    radial-gradient(ellipse at 80% 20%, rgba(255,255,255,0.45) 0%, transparent 55%);
+    radial-gradient(ellipse at 20% 30%, rgba(255,255,255,0.3) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(255,255,255,0.2) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0.1) 0%, transparent 70%);
 }
 
 /* ── Header ──────────────────────────────────────────────────────────────── */
