@@ -76,72 +76,102 @@ export default function App() {
         '--dynamic-color-light': bgColor + '55',
       } as React.CSSProperties}
     >
-      {/* Dynamic background blobs */}
+      {/* Paper + ambient light */}
       <div className="app__bg">
         <div className="app__blob app__blob--1" />
         <div className="app__blob app__blob--2" />
         <div className="app__blob app__blob--3" />
       </div>
 
-      {/* Header */}
-      <header className="app__header">
-        <h1 className="app__logo">♫ Vinyl</h1>
-        <SearchBar
-          query={playlist.searchQuery}
-          onQueryChange={playlist.setSearchQuery}
-          onAddSong={playlist.addToEnd}
-          onAddAtPosition={handleAddAtPosition}
-          onPlayNow={handlePlayNow}
-          queueSize={playlist.songs.length}
-        />
-        <button
-          className={`app__playlist-toggle ${isPlaylistOpen ? 'app__playlist-toggle--open' : ''}`}
-          onClick={() => setIsPlaylistOpen(!isPlaylistOpen)}
-          aria-label={isPlaylistOpen ? 'Hide playlist' : 'Show playlist'}
-          title={isPlaylistOpen ? 'Hide playlist' : 'Show playlist'}
-        >
-          <span className="toggle-icon">📀</span>
-          <span className="toggle-text">Queue ({playlist.songs.length})</span>
-        </button>
-      </header>
+      <main className="console" aria-label="Vintage Vinyl Player">
+        <section className="console__frame">
+          <header className="console__top">
+            <div className="console__brand" aria-label="Brand">
+              <div className="console__mark" aria-hidden="true">
+                ♫
+              </div>
+              <div className="console__wordmark">
+                <div className="console__title">Vinyl Atelier</div>
+                <div className="console__subtitle">A warm, modern turntable UI</div>
+              </div>
+            </div>
 
-      {/* Main Content */}
-      <main className="app__main">
-        {/* Vinyl Player */}
-        <div className="app__vinyl-container">
-          <Vinyl
-            currentSong={playlist.currentSong}
-            isPlaying={player.isPlaying}
-            position={player.position}
-            duration={player.duration}
-            volume={player.volume}
-            repeatMode={playlist.repeatMode}
-            isShuffled={playlist.isShuffled}
-            onTogglePlay={player.togglePlay}
-            onNext={handleNext}
-            onPrev={handlePrev}
-            onSeek={player.seek}
-            onVolumeChange={player.setVolume}
-            onToggleRepeat={playlist.toggleRepeat}
-            onToggleShuffle={playlist.toggleShuffle}
-            onColorExtracted={setBgColor}
-          />
-        </div>
+            <div className="console__topRight">
+              <button
+                className={`console__queueBtn ${isPlaylistOpen ? 'console__queueBtn--open' : ''}`}
+                onClick={() => setIsPlaylistOpen((v) => !v)}
+                aria-label={isPlaylistOpen ? 'Hide playlist' : 'Show playlist'}
+                aria-expanded={isPlaylistOpen}
+              >
+                <span className="console__queueIcon" aria-hidden="true">
+                  ⟡
+                </span>
+                <span className="console__queueText">Queue</span>
+                <span className="console__queueCount" aria-label="Queue size">
+                  {playlist.songs.length}
+                </span>
+              </button>
+            </div>
+          </header>
 
-        {/* Playlist Dropdown */}
-        <div className={`app__playlist-dropdown ${isPlaylistOpen ? 'app__playlist-dropdown--open' : ''}`}>
-          <Playlist
-            songs={filteredSongs}
-            currentSong={playlist.currentSong}
-            showFavoritesOnly={playlist.showFavoritesOnly}
-            onPlay={handlePlaySong}
-            onRemove={playlist.removeSong}
-            onToggleFavorite={playlist.toggleFavorite}
-            onToggleFavoritesFilter={playlist.toggleFavoritesFilter}
-            onReorder={playlist.reorderSong}
-            onClose={() => setIsPlaylistOpen(false)}
-          />
-        </div>
+          <div className="console__body">
+            <div className="console__hero">
+              <Vinyl
+                currentSong={playlist.currentSong}
+                isPlaying={player.isPlaying}
+                position={player.position}
+                duration={player.duration}
+                volume={player.volume}
+                repeatMode={playlist.repeatMode}
+                isShuffled={playlist.isShuffled}
+                onTogglePlay={player.togglePlay}
+                onNext={handleNext}
+                onPrev={handlePrev}
+                onSeek={player.seek}
+                onVolumeChange={player.setVolume}
+                onToggleRepeat={playlist.toggleRepeat}
+                onToggleShuffle={playlist.toggleShuffle}
+                onColorExtracted={setBgColor}
+              />
+            </div>
+
+            <aside className="console__side">
+              <div className="console__crate">
+                <div className="console__crateTitle">Crate dig</div>
+                <div className="console__crateHint">Search & place records in your queue.</div>
+                <SearchBar
+                  query={playlist.searchQuery}
+                  onQueryChange={playlist.setSearchQuery}
+                  onAddSong={playlist.addToEnd}
+                  onAddAtPosition={handleAddAtPosition}
+                  onPlayNow={handlePlayNow}
+                  queueSize={playlist.songs.length}
+                  onAddToStart={playlist.addToStart}
+                />
+              </div>
+
+              <div
+                className={`console__playlistFlyout ${isPlaylistOpen ? 'console__playlistFlyout--open' : ''}`}
+                role="dialog"
+                aria-label="Playlist"
+              >
+                <div className="console__playlistFlyoutInner">
+                  <Playlist
+                    songs={filteredSongs}
+                    currentSong={playlist.currentSong}
+                    showFavoritesOnly={playlist.showFavoritesOnly}
+                    onPlay={handlePlaySong}
+                    onRemove={playlist.removeSong}
+                    onToggleFavorite={playlist.toggleFavorite}
+                    onToggleFavoritesFilter={playlist.toggleFavoritesFilter}
+                    onReorder={playlist.reorderSong}
+                    onClose={() => setIsPlaylistOpen(false)}
+                  />
+                </div>
+              </div>
+            </aside>
+          </div>
+        </section>
       </main>
     </div>
   );

@@ -7,6 +7,7 @@ interface SearchBarProps {
   query: string;
   onQueryChange: (query: string) => void;
   onAddSong: (song: Song) => void;
+  onAddToStart: (song: Song) => void;
   onAddAtPosition: (song: Song, position: number) => void;
   onPlayNow: (song: Song) => void;
   queueSize: number;
@@ -16,6 +17,7 @@ export function SearchBar({
   query,
   onQueryChange,
   onAddSong,
+  onAddToStart,
   onAddAtPosition,
   onPlayNow,
   queueSize,
@@ -54,6 +56,12 @@ export function SearchBar({
 
   function handleAddToEnd(song: Song) {
     onAddSong(song);
+    setResults([]);
+    onQueryChange('');
+  }
+
+  function handleAddToStart(song: Song) {
+    onAddToStart(song);
     setResults([]);
     onQueryChange('');
   }
@@ -139,6 +147,14 @@ export function SearchBar({
                     title="Play now"
                   >
                     ▶
+                  </button>
+                  <button
+                    className="search-bar__start-btn"
+                    onClick={() => handleAddToStart(song)}
+                    aria-label={`Add ${song.title} to start of queue`}
+                    title="Add to start"
+                  >
+                    ⇤
                   </button>
                   <button
                     className="search-bar__add-btn"
