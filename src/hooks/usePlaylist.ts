@@ -1,176 +1,167 @@
 import { useState, useCallback, useRef } from 'react';
 import { DoublyLinkedList } from '../data-structures/DoublyLinkedList';
-import { SAMPLE_SONGS } from '../data/sampleSongs';
-import type { SongData, SongNode } from '../models/Song';
+import { Song, SongNode } from '../models/Song';
 
 export type RepeatMode = 'none' | 'one' | 'all';
 
-export interface PlaylistState {
+interface PlaylistState {
   songs: SongNode[];
   currentSong: SongNode | null;
-  isPlaying: boolean;
-  repeatMode: RepeatMode;
   isShuffled: boolean;
-  showFavoritesOnly: boolean;
+  repeatMode: RepeatMode;
   searchQuery: string;
+  showFavoritesOnly: boolean;
 }
 
-export interface PlaylistActions {
-  addToStart: (song: SongData) => void;
-  addToEnd: (song: SongData) => void;
-  addAtPosition: (song: SongData, position: number) => void;
+interface PlaylistActions {
+  addToEnd: (song: Song) => void;
+  addToStart: (song: Song) => void;
+  addAtPosition: (song: Song, position: number) => void;
   removeSong: (id: string) => void;
-  playNext: () => void;
-  playPrev: () => void;
-  selectSong: (id: string) => void;
-  togglePlay: () => void;
+  playNext: () => SongNode | null;
+  playPrev: () => SongNode | null;
+  playSong: (id: string) => void;
   toggleFavorite: (id: string) => void;
   toggleShuffle: () => void;
   toggleRepeat: () => void;
-  toggleFavoritesFilter: () => void;
   setSearchQuery: (query: string) => void;
+  toggleFavoritesFilter: () => void;
   getFilteredSongs: () => SongNode[];
 }
 
-function buildInitialList(): DoublyLinkedList {
-  const dll = new DoublyLinkedList();
-  for (const song of SAMPLE_SONGS) {
-    dll.addToEnd(song);
-  }
-  return dll;
-}
-
 export function usePlaylist(): PlaylistState & PlaylistActions {
-  const dllRef = useRef<DoublyLinkedList>(buildInitialList());
+  const dll = useRef(new DoublyLinkedList());
 
-  const [songs, setSongs] = useState<SongNode[]>(() => dllRef.current.toArray());
-  const [currentSong, setCurrentSong] = useState<SongNode | null>(
-    () => dllRef.current.getCurrent()
-  );
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [repeatMode, setRepeatMode] = useState<RepeatMode>('none');
-  const [isShuffled, setIsShuffled] = useState(false);
-  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [state, setState] = useState<PlaylistState>({
+    songs: [],
+    currentSong: null,
+    isShuffled: false,
+    repeatMode: 'none',
+    searchQuery: '',
+    showFavoritesOnly: false,
+  });
 
-  const syncState = useCallback(() => {
-    setSongs(dllRef.current.toArray());
-    setCurrentSong(dllRef.current.getCurrent());
+  const sync = useCallback(() => {
+    setState((prev) => ({
+      ...prev,
+      songs: dll.current.toArray(),
+      currentSong: dll.current.getCurrentNode(),
+    }));
   }, []);
 
-  const addToStart = useCallback(
-    (song: SongData) => {
-      dllRef.current.addToStart(song);
-      syncState();
+  const addToEnd = useCallback(
+    (song: Song) => {
+      dll.current.addToEnd(song);
+      sync();
     },
-    [syncState]
+    [sync]
   );
 
-  const addToEnd = useCallback(
-    (song: SongData) => {
-      dllRef.current.addToEnd(song);
-      syncState();
+  const addToStart = useCallback(
+    (song: Song) => {
+      dll.current.addToStart(song);
+      sync();
     },
-    [syncState]
+    [sync]
   );
 
   const addAtPosition = useCallback(
-    (song: SongData, position: number) => {
-      dllRef.current.addAtPosition(song, position);
-      syncState();
+    (song: Song, position: number) => {
+      dll.current.addAtPosition(song, position);
+      sync();
     },
-    [syncState]
+    [sync]
   );
 
   const removeSong = useCallback(
     (id: string) => {
-      dllRef.current.remove(id);
-      syncState();
+      dll.current.remove(id);
+      sync();
     },
-    [syncState]
+    [sync]
   );
 
-  const playNext = useCallback(() => {
-    if (repeatMode === 'one' && currentSong !== null) {
-      setIsPlaying(true);
-      return;
-    }
-    const next = dllRef.current.next();
-    setCurrentSong(next);
-    setIsPlaying(next !== null);
-  }, [repeatMode, currentSong]);
+  const playNext = useCallback((): SongNode | null => {
+    const next = dll.current.wrapNext();
+    sync();
+    return next;
+  }, [sync]);
 
-  const playPrev = useCallback(() => {
-    const prev = dllRef.current.prev();
-    setCurrentSong(prev);
-    setIsPlaying(prev !== null);
-  }, []);
+  const playPrev = useCallback((): SongNode | null => {
+    const prev = dll.current.wrapPrev();
+    sync();
+    return prev;
+  }, [sync]);
 
-  const selectSong = useCallback((id: string) => {
-    dllRef.current.setCurrent(id);
-    setCurrentSong(dllRef.current.getCurrent());
-    setIsPlaying(true);
-  }, []);
-
-  const togglePlay = useCallback(() => {
-    setIsPlaying((prev) => !prev);
-  }, []);
+  const playSong = useCallback(
+    (id: string) => {
+      const nodes = dll.current.toArray();
+      const node = nodes.find((n) => n.song.id === id) ?? null;
+      dll.current.setCurrentNode(node);
+      sync();
+    },
+    [sync]
+  );
 
   const toggleFavorite = useCallback(
     (id: string) => {
-      dllRef.current.toggleFavorite(id);
-      syncState();
+      dll.current.toggleFavorite(id);
+      sync();
     },
-    [syncState]
+    [sync]
   );
 
   const toggleShuffle = useCallback(() => {
-    dllRef.current.shuffle();
-    setIsShuffled((prev) => !prev);
-    syncState();
-  }, [syncState]);
+    dll.current.shuffle();
+    setState((prev) => ({ ...prev, isShuffled: !prev.isShuffled }));
+    sync();
+  }, [sync]);
 
   const toggleRepeat = useCallback(() => {
-    setRepeatMode((prev) => {
-      if (prev === 'none') return 'all';
-      if (prev === 'all') return 'one';
-      return 'none';
+    setState((prev) => {
+      const modes: RepeatMode[] = ['none', 'all', 'one'];
+      const next = modes[(modes.indexOf(prev.repeatMode) + 1) % modes.length];
+      return { ...prev, repeatMode: next };
     });
   }, []);
 
+  const setSearchQuery = useCallback((query: string) => {
+    setState((prev) => ({ ...prev, searchQuery: query }));
+  }, []);
+
   const toggleFavoritesFilter = useCallback(() => {
-    setShowFavoritesOnly((prev) => !prev);
+    setState((prev) => ({
+      ...prev,
+      showFavoritesOnly: !prev.showFavoritesOnly,
+    }));
   }, []);
 
   const getFilteredSongs = useCallback((): SongNode[] => {
-    let list = searchQuery.trim() !== '' ? dllRef.current.search(searchQuery) : songs;
-    if (showFavoritesOnly) {
-      list = list.filter((s) => s.isFavorite);
+    let nodes = state.searchQuery
+      ? dll.current.search(state.searchQuery)
+      : dll.current.toArray();
+
+    if (state.showFavoritesOnly) {
+      nodes = nodes.filter((n) => n.song.isFavorite);
     }
-    return list;
-  }, [songs, searchQuery, showFavoritesOnly]);
+
+    return nodes;
+  }, [state.searchQuery, state.showFavoritesOnly]);
 
   return {
-    songs,
-    currentSong,
-    isPlaying,
-    repeatMode,
-    isShuffled,
-    showFavoritesOnly,
-    searchQuery,
-    addToStart,
+    ...state,
     addToEnd,
+    addToStart,
     addAtPosition,
     removeSong,
     playNext,
     playPrev,
-    selectSong,
-    togglePlay,
+    playSong,
     toggleFavorite,
     toggleShuffle,
     toggleRepeat,
-    toggleFavoritesFilter,
     setSearchQuery,
+    toggleFavoritesFilter,
     getFilteredSongs,
   };
 }

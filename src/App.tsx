@@ -1,121 +1,140 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useEffect } from 'react';
+import { usePlaylist } from './hooks/usePlaylist';
+import { useSpotifyPlayer } from './hooks/useSpotifyPlayer';
+import {
+  isAuthenticated,
+  redirectToSpotifyLogin,
+  exchangeCodeForTokens,
+  clearTokens,
+} from './services/spotifyAuth';
+import { getRecommendations } from './services/spotifyApi';
+import { Player } from './components/Player/Player';
+import { Playlist } from './components/Playlist/Playlist';
+import { SearchBar } from './components/SearchBar/SearchBar';
+import './App.css';
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const playlist = usePlaylist();
+  const player = useSpotifyPlayer();
 
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
+  // Handle OAuth callback
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+
+    if (code) {
+      exchangeCodeForTokens(code)
+        .then(() => {
+          window.history.replaceState({}, '', '/');
+        })
+        .catch(console.error);
+    }
+  }, []);
+
+  // Load recommendations once authenticated and player is ready
+  useEffect(() => {
+    if (!isAuthenticated() || !player.isReady) return;
+
+    getRecommendations()
+      .then((songs) => {
+        songs.forEach((song) => playlist.addToEnd(song));
+      })
+      .catch(console.error);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [player.isReady]);
+
+  async function handlePlaySong(id: string) {
+    playlist.playSong(id);
+    const node = playlist.songs.find((n) => n.song.id === id);
+    if (node) {
+      await player.play(node.song.uri);
+    }
+  }
+
+  async function handleNext() {
+    const next = playlist.playNext();
+    if (next) await player.play(next.song.uri);
+  }
+
+  async function handlePrev() {
+    const prev = playlist.playPrev();
+    if (prev) await player.play(prev.song.uri);
+  }
+
+  const filteredSongs = playlist.getFilteredSongs();
+
+  if (!isAuthenticated()) {
+    return (
+      <div className="login-screen">
+        <div className="login-card">
+          <div className="login-card__logo">♫</div>
+          <h1 className="login-card__title">Music Player</h1>
+          <p className="login-card__subtitle">
+            A doubly linked list powered music player
+          </p>
+          <button
+            className="login-card__btn"
+            onClick={() => redirectToSpotifyLogin()}
+          >
+            Connect with Spotify
+          </button>
+          <p className="login-card__note">
+            Requires Spotify Premium for full playback
           </p>
         </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="app">
+      <header className="app__header">
+        <h1 className="app__logo">♫ Music Player</h1>
+        <SearchBar
+          query={playlist.searchQuery}
+          onQueryChange={playlist.setSearchQuery}
+          onAddSong={playlist.addToEnd}
+        />
         <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
+          className="app__logout"
+          onClick={() => {
+            clearTokens();
+            window.location.reload();
+          }}
+          aria-label="Log out"
         >
-          Count is {count}
+          Log out
         </button>
-      </section>
+      </header>
 
-      <div className="ticks"></div>
+      <main className="app__main">
+        <Playlist
+          songs={filteredSongs}
+          currentSong={playlist.currentSong}
+          showFavoritesOnly={playlist.showFavoritesOnly}
+          onPlay={handlePlaySong}
+          onRemove={playlist.removeSong}
+          onToggleFavorite={playlist.toggleFavorite}
+          onToggleFavoritesFilter={playlist.toggleFavoritesFilter}
+        />
+      </main>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      <Player
+        currentSong={playlist.currentSong}
+        isPlaying={player.isPlaying}
+        position={player.position}
+        duration={player.duration}
+        volume={player.volume}
+        repeatMode={playlist.repeatMode}
+        isShuffled={playlist.isShuffled}
+        onTogglePlay={player.togglePlay}
+        onNext={handleNext}
+        onPrev={handlePrev}
+        onSeek={player.seek}
+        onVolumeChange={player.setVolume}
+        onToggleRepeat={playlist.toggleRepeat}
+        onToggleShuffle={playlist.toggleShuffle}
+      />
+    </div>
+  );
 }
-
-export default App

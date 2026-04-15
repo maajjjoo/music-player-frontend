@@ -1,4 +1,4 @@
-import type { SongData, SongNode } from '../models/Song';
+import { Song, SongNode } from '../models/Song';
 
 export class DoublyLinkedList {
   private head: SongNode | null = null;
@@ -6,105 +6,121 @@ export class DoublyLinkedList {
   private currentNode: SongNode | null = null;
   private _size: number = 0;
 
-  private createNode(data: SongData): SongNode {
-    return { ...data, prev: null, next: null };
-  }
-
   size(): number {
     return this._size;
   }
 
-  getCurrent(): SongNode | null {
+  getCurrentNode(): SongNode | null {
     return this.currentNode;
   }
 
-  setCurrent(id: string): void {
-    let node = this.head;
-    while (node !== null) {
-      if (node.id === id) {
-        this.currentNode = node;
-        return;
-      }
-      node = node.next;
-    }
+  setCurrentNode(node: SongNode | null): void {
+    this.currentNode = node;
   }
 
-  addToStart(song: SongData): void {
-    const node = this.createNode(song);
-    if (this.head === null) {
+  addToEnd(song: Song): void {
+    const node: SongNode = { song, prev: null, next: null };
+    if (!this.tail) {
       this.head = node;
       this.tail = node;
-    } else {
-      node.next = this.head;
-      this.head.prev = node;
-      this.head = node;
-    }
-    if (this._size === 0) this.currentNode = node;
-    this._size++;
-  }
-
-  addToEnd(song: SongData): void {
-    const node = this.createNode(song);
-    if (this.tail === null) {
-      this.head = node;
-      this.tail = node;
+      this.currentNode = node;
     } else {
       node.prev = this.tail;
       this.tail.next = node;
       this.tail = node;
     }
-    if (this._size === 0) this.currentNode = node;
     this._size++;
   }
 
-  addAtPosition(song: SongData, position: number): void {
-    const clampedPosition = Math.max(0, Math.min(position, this._size));
-    if (clampedPosition === 0) {
+  addToStart(song: Song): void {
+    const node: SongNode = { song, prev: null, next: null };
+    if (!this.head) {
+      this.head = node;
+      this.tail = node;
+      this.currentNode = node;
+    } else {
+      node.next = this.head;
+      this.head.prev = node;
+      this.head = node;
+    }
+    this._size++;
+  }
+
+  addAtPosition(song: Song, position: number): void {
+    if (position <= 0) {
       this.addToStart(song);
       return;
     }
-    if (clampedPosition === this._size) {
+    if (position >= this._size) {
       this.addToEnd(song);
       return;
     }
-    const node = this.createNode(song);
+
     let current = this.head;
-    for (let i = 0; i < clampedPosition - 1; i++) {
-      current = current!.next;
+    let index = 0;
+    while (current && index < position) {
+      current = current.next;
+      index++;
     }
-    const after = current!.next;
-    node.prev = current;
-    node.next = after;
-    current!.next = node;
-    if (after !== null) after.prev = node;
+
+    if (!current) {
+      this.addToEnd(song);
+      return;
+    }
+
+    const node: SongNode = { song, prev: current.prev, next: current };
+    if (current.prev) {
+      current.prev.next = node;
+    }
+    current.prev = node;
     this._size++;
   }
 
   remove(id: string): void {
-    let node = this.head;
-    while (node !== null) {
-      if (node.id === id) {
-        if (node.prev !== null) node.prev.next = node.next;
-        else this.head = node.next;
-
-        if (node.next !== null) node.next.prev = node.prev;
-        else this.tail = node.prev;
-
-        if (this.currentNode?.id === id) {
-          this.currentNode = node.next ?? node.prev ?? null;
+    let current = this.head;
+    while (current) {
+      if (current.song.id === id) {
+        if (current.prev) {
+          current.prev.next = current.next;
+        } else {
+          this.head = current.next;
         }
-
-        node.prev = null;
-        node.next = null;
+        if (current.next) {
+          current.next.prev = current.prev;
+        } else {
+          this.tail = current.prev;
+        }
+        if (this.currentNode?.song.id === id) {
+          this.currentNode = current.next ?? current.prev ?? null;
+        }
         this._size--;
         return;
       }
-      node = node.next;
+      current = current.next;
     }
   }
 
   next(): SongNode | null {
-    if (this.currentNode?.next !== null && this.currentNode?.next !== undefined) {
+    if (!this.currentNode) return null;
+    if (this.currentNode.next) {
+      this.currentNode = this.currentNode.next;
+      return this.currentNode;
+    }
+    return null;
+  }
+
+  prev(): SongNode | null {
+    if (!this.currentNode) return null;
+    if (this.currentNode.prev) {
+      this.currentNode = this.currentNode.prev;
+      return this.currentNode;
+    }
+    return null;
+  }
+
+  wrapNext(): SongNode | null {
+    if (!this.currentNode) return null;
+    if (this.currentNode.next) {
       this.currentNode = this.currentNode.next;
     } else {
       this.currentNode = this.head;
@@ -112,8 +128,9 @@ export class DoublyLinkedList {
     return this.currentNode;
   }
 
-  prev(): SongNode | null {
-    if (this.currentNode?.prev !== null && this.currentNode?.prev !== undefined) {
+  wrapPrev(): SongNode | null {
+    if (!this.currentNode) return null;
+    if (this.currentNode.prev) {
       this.currentNode = this.currentNode.prev;
     } else {
       this.currentNode = this.tail;
@@ -122,73 +139,75 @@ export class DoublyLinkedList {
   }
 
   search(query: string): SongNode[] {
-    const lower = query.toLowerCase();
     const results: SongNode[] = [];
-    let node = this.head;
-    while (node !== null) {
+    const lower = query.toLowerCase();
+    let current = this.head;
+    while (current) {
       if (
-        node.title.toLowerCase().includes(lower) ||
-        node.artist.toLowerCase().includes(lower)
+        current.song.title.toLowerCase().includes(lower) ||
+        current.song.artist.toLowerCase().includes(lower) ||
+        current.song.album.toLowerCase().includes(lower)
       ) {
-        results.push(node);
+        results.push(current);
       }
-      node = node.next;
+      current = current.next;
     }
     return results;
   }
 
   toggleFavorite(id: string): void {
-    let node = this.head;
-    while (node !== null) {
-      if (node.id === id) {
-        node.isFavorite = !node.isFavorite;
+    let current = this.head;
+    while (current) {
+      if (current.song.id === id) {
+        current.song.isFavorite = !current.song.isFavorite;
         return;
       }
-      node = node.next;
+      current = current.next;
     }
   }
 
   shuffle(): void {
-    if (this._size <= 1) return;
-    const arr = this.toArray();
-
+    const nodes = this.toArray();
     // Fisher-Yates shuffle
-    for (let i = arr.length - 1; i > 0; i--) {
+    for (let i = nodes.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
+      [nodes[i], nodes[j]] = [nodes[j], nodes[i]];
     }
-
-    // Rebuild linked list from shuffled array
+    // Rebuild list from shuffled array
     this.head = null;
     this.tail = null;
     this._size = 0;
-    const previousCurrentId = this.currentNode?.id ?? null;
+    const currentId = this.currentNode?.song.id;
     this.currentNode = null;
 
-    for (const song of arr) {
-      this.addToEnd({
-        id: song.id,
-        title: song.title,
-        artist: song.artist,
-        duration: song.duration,
-        isFavorite: song.isFavorite,
-        albumArt: song.albumArt,
-      });
+    for (const node of nodes) {
+      this.addToEnd(node.song);
     }
 
-    // Restore current node pointer
-    if (previousCurrentId !== null) {
-      this.setCurrent(previousCurrentId);
+    // Restore currentNode pointer
+    if (currentId) {
+      let current = this.head;
+      while (current) {
+        if (current.song.id === currentId) {
+          this.currentNode = current;
+          break;
+        }
+        current = current.next;
+      }
     }
   }
 
   toArray(): SongNode[] {
     const result: SongNode[] = [];
-    let node = this.head;
-    while (node !== null) {
-      result.push(node);
-      node = node.next;
+    let current = this.head;
+    while (current) {
+      result.push(current);
+      current = current.next;
     }
     return result;
+  }
+
+  getHead(): SongNode | null {
+    return this.head;
   }
 }
